@@ -1,0 +1,1017 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2072%2073%22%3E%3Crect%20width%3D%2272%22%20height%3D%2273%22%20fill%3D%22%23FFFF00%22/%3E%3Ctext%20x%3D%2236%22%20y%3D%2231%22%20font-family%3D%22monospace%22%20font-size%3D%2219%22%20font-weight%3D%22700%22%20text-anchor%3D%22middle%22%20fill%3D%22%23000%22%3ENE%3C/text%3E%3Ctext%20x%3D%2236%22%20y%3D%2253%22%20font-family%3D%22monospace%22%20font-size%3D%2213%22%20font-weight%3D%22700%22%20text-anchor%3D%22middle%22%20fill%3D%22%23000%22%3EWP%3C/text%3E%3C/svg%3E">
+<style>:root{padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}html{color-scheme:light dark}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>Nibble Edge WP Watch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800&family=Overpass+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#eef3f0; --surface:#ffffff; --surface-2:#f5f9f6; --surface-3:#eef4f0;
+  --border:#e0e8e3; --border-strong:#cdd8d1;
+  --ink:#132420; --muted:#566a62; --faint:#84948c;
+  --accent:#0f9488; --accent-ink:#0a6d64; --accent-weak:rgba(15,148,136,.12);
+  --ok:#15954e; --ok-weak:rgba(21,149,78,.13);
+  --warn:#b26a00; --warn-weak:rgba(178,106,0,.14);
+  --crit:#d33241; --crit-weak:rgba(211,50,65,.12);
+  --info:#2f6fb0; --info-weak:rgba(47,111,176,.12);
+  --shadow:0 1px 2px rgba(19,36,32,.05),0 8px 24px -12px rgba(19,36,32,.16);
+  --shadow-sm:0 1px 2px rgba(19,36,32,.06);
+  --radius:14px; --radius-sm:9px;
+  --sans:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme:dark){
+    --bg:#0c1310; --surface:#121b17; --surface-2:#172219; --surface-3:#1c2a22;
+    --border:#243229; --border-strong:#31423a;
+    --ink:#e9f1ec; --muted:#9fb1a8; --faint:#6d7f77;
+    --accent:#2dd4bf; --accent-ink:#7ff0e0; --accent-weak:rgba(45,212,191,.15);
+    --ok:#41c579; --ok-weak:rgba(65,197,121,.15);
+    --warn:#e0a94e; --warn-weak:rgba(224,169,78,.15);
+    --crit:#ff6b73; --crit-weak:rgba(255,107,115,.15);
+    --info:#7db4e8; --info-weak:rgba(125,180,232,.15);
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 30px -14px rgba(0,0,0,.6);
+    --shadow-sm:0 1px 2px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0c1310; --surface:#121b17; --surface-2:#172219; --surface-3:#1c2a22;
+  --border:#243229; --border-strong:#31423a;
+  --ink:#e9f1ec; --muted:#9fb1a8; --faint:#6d7f77;
+  --accent:#2dd4bf; --accent-ink:#7ff0e0; --accent-weak:rgba(45,212,191,.15);
+  --ok:#41c579; --ok-weak:rgba(65,197,121,.15);
+  --warn:#e0a94e; --warn-weak:rgba(224,169,78,.15);
+  --crit:#ff6b73; --crit-weak:rgba(255,107,115,.15);
+  --info:#7db4e8; --info-weak:rgba(125,180,232,.15);
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 30px -14px rgba(0,0,0,.6);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-size:15px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+h1,h2,h3{margin:0;font-weight:700;text-wrap:balance}
+a{color:var(--accent-ink);text-decoration:none}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.tnum{font-variant-numeric:tabular-nums}
+
+/* ---- top bar ---- */
+header.bar{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:30;
+  background:color-mix(in srgb,var(--surface) 88%,transparent);
+  backdrop-filter:saturate(1.4) blur(10px);
+  border-bottom:1px solid var(--border);
+}
+.bar-in{display:flex;align-items:center;gap:14px;padding:12px 16px;max-width:1180px;margin:0 auto;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto}
+.logo{width:34px;height:34px;flex:none;border-radius:9px;background:linear-gradient(145deg,var(--accent),var(--accent-ink));display:grid;place-items:center;box-shadow:var(--shadow-sm)}
+.logo svg{width:20px;height:20px}
+.brand-txt{display:flex;flex-direction:column;line-height:1.1}
+.brand-txt .n{font-weight:800;font-size:15px;letter-spacing:-.01em}
+.brand-txt .s{font-size:11px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.search{position:relative;flex:1;min-width:180px;max-width:340px}
+.search input{
+  width:100%;padding:9px 12px 9px 34px;border-radius:10px;border:1px solid var(--border-strong);
+  background:var(--surface-2);color:var(--ink);font:inherit;font-size:14px;
+}
+.search input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--faint)}
+.iconbtn{
+  width:38px;height:38px;flex:none;border-radius:10px;border:1px solid var(--border-strong);
+  background:var(--surface-2);color:var(--ink);cursor:pointer;display:grid;place-items:center;
+}
+.iconbtn:hover{border-color:var(--accent);color:var(--accent-ink)}
+.iconbtn svg{width:18px;height:18px}
+
+/* ---- page ---- */
+main{padding-block:22px 60px}
+.pagehead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.pagehead h1{font-size:24px;letter-spacing:-.02em}
+.pagehead p{margin:4px 0 0;color:var(--muted);font-size:13.5px}
+.asof{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:7px;white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px var(--ok-weak)}
+
+/* ---- KPI tiles ---- */
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:22px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 15px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
+.kpi .num{font-size:27px;font-weight:800;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums}
+.kpi .lbl{font-size:11.5px;color:var(--muted);margin-top:7px;text-transform:uppercase;letter-spacing:.04em;font-weight:600}
+.kpi .rail{position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+.kpi.crit .rail{background:var(--crit)} .kpi.crit .num{color:var(--crit)}
+.kpi.warn .rail{background:var(--warn)} .kpi.warn .num{color:var(--warn)}
+.kpi.ok .rail{background:var(--ok)} .kpi.ok .num{color:var(--ok)}
+.kpi.info .rail{background:var(--info)}
+
+/* ---- critical band ---- */
+.band{
+  background:var(--crit-weak);border:1px solid color-mix(in srgb,var(--crit) 32%,transparent);
+  border-radius:var(--radius);padding:16px 18px;margin-bottom:22px;
+}
+.band-h{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.band-h .pip{width:22px;height:22px;border-radius:6px;background:var(--crit);display:grid;place-items:center;flex:none}
+.band-h .pip svg{width:14px;height:14px;color:#fff}
+.band-h h2{font-size:15px;color:var(--crit)}
+.band-h .cnt{margin-left:auto;font-size:12.5px;color:var(--crit);font-weight:600;background:var(--surface);padding:3px 9px;border-radius:20px;border:1px solid color-mix(in srgb,var(--crit) 30%,transparent)}
+.vuln-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-top:1px solid color-mix(in srgb,var(--crit) 16%,transparent);flex-wrap:wrap}
+.vuln-row:first-of-type{border-top:none}
+.vuln-plugin{font-weight:700;font-size:14px;min-width:150px}
+.vuln-site{font-size:12.5px;color:var(--muted)}
+.vuln-desc{font-size:13px;color:var(--ink);flex:1;min-width:200px}
+.sev{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;padding:2px 8px;border-radius:5px;white-space:nowrap}
+.sev.critical{background:var(--crit);color:#fff}
+.sev.high{background:var(--warn);color:#fff}
+.sev.medium{background:var(--info);color:#fff}
+.band-more,.grp-more{margin-top:12px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;background:var(--surface);padding:6px 12px;border-radius:8px}
+.band-more{color:var(--crit);border:1px solid color-mix(in srgb,var(--crit) 30%,transparent)}
+.band-more:hover{background:var(--crit);color:#fff}
+.grp-more{color:var(--accent-ink);border:1px solid var(--border-strong)}
+.grp-more:hover{border-color:var(--accent)}
+
+/* ---- action panel (attention / plugin updates tabs) ---- */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);margin-bottom:22px;overflow:hidden}
+.panel-tabs{display:flex;gap:4px;padding:6px 8px 0;background:var(--surface-2);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.ptab{font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;border:none;background:none;color:var(--muted);padding:11px 12px;border-bottom:2px solid transparent;display:inline-flex;align-items:center;gap:8px}
+.ptab:hover{color:var(--ink)}
+.ptab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.ptab .cnt{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;font-variant-numeric:tabular-nums}
+.cnt.crit{background:var(--crit-weak);color:var(--crit)} .cnt.warn{background:var(--warn-weak);color:var(--warn)}
+.cnt.lic{background:var(--accent-weak);color:var(--accent-ink)}
+.pip-lic{background:var(--accent)}
+.panel-body{padding:14px 18px 18px}
+.panel-note{font-size:12.5px;color:var(--muted);margin-bottom:12px;font-weight:600}
+.panel-empty{padding:14px 2px;color:var(--muted);font-size:13.5px}
+.pip{width:20px;height:20px;border-radius:6px;display:grid;place-items:center;flex:none}
+.pip svg{width:13px;height:13px;color:#fff}
+.pip-crit{background:var(--crit)} .pip-warn{background:var(--warn)}
+.grp{border-top:1px solid var(--border)}
+.grp:first-of-type{border-top:none}
+.grp-head{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:none;border:none;font:inherit;color:inherit;cursor:pointer;padding:9px 2px}
+.grp-head:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-radius:6px}
+.grp-count{flex:none;min-width:26px;height:22px;padding:0 7px;border-radius:6px;background:var(--warn-weak);color:var(--warn);font-weight:800;font-size:12.5px;display:inline-flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+.grp-name{flex:1;min-width:0;font-weight:600;font-size:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.grp-ver{flex:none}
+.grp .chev{width:17px;height:17px;color:var(--faint);flex:none;transition:transform .18s}
+.grp.open .chev{transform:rotate(180deg)}
+.grp-body{display:none;padding:2px 2px 10px 40px;flex-direction:column;gap:0}
+.grp.open .grp-body{display:flex}
+.grp-site{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:13px;border-top:1px dashed var(--border);flex-wrap:wrap}
+.grp-site:first-child{border-top:none}
+.gs-name{flex:1;min-width:120px;color:var(--muted)}
+
+/* ---- filter chips ---- */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.chip{
+  font:inherit;font-size:13px;font-weight:600;cursor:pointer;
+  padding:7px 13px;border-radius:20px;border:1px solid var(--border-strong);
+  background:var(--surface);color:var(--muted);display:inline-flex;align-items:center;gap:7px;
+}
+.chip:hover{border-color:var(--accent);color:var(--accent-ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.chip .c{font-size:11.5px;background:var(--surface-3);color:var(--muted);padding:1px 7px;border-radius:10px;font-variant-numeric:tabular-nums}
+.chip[aria-pressed="true"] .c{background:rgba(255,255,255,.18);color:#fff}
+.spacer{flex:1}
+.sortsel{font:inherit;font-size:13px;padding:7px 10px;border-radius:9px;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink)}
+
+/* ---- environment tabs ---- */
+.envtabs{display:inline-flex;gap:3px;padding:3px;background:var(--surface-3);border:1px solid var(--border);border-radius:11px;margin-bottom:18px}
+.envtab{font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--muted);padding:7px 15px;border-radius:8px;display:inline-flex;align-items:center;gap:7px}
+.envtab:hover{color:var(--ink)}
+.envtab[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow-sm)}
+.envtab .c{font-size:11.5px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.envtab[aria-selected="true"] .c{color:var(--accent-ink)}
+.tag.stg{color:var(--warn);background:var(--warn-weak)}
+
+/* ---- site cards ---- */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.site{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;transition:box-shadow .15s,border-color .15s}
+.site.open{box-shadow:var(--shadow);border-color:var(--border-strong)}
+.site-head{display:flex;align-items:center;gap:12px;padding:15px 16px;cursor:pointer;user-select:none;width:100%;text-align:left;background:none;border:none;color:inherit;font:inherit}
+.site-head:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.stat{width:10px;height:10px;border-radius:50%;flex:none;margin-top:5px}
+.stat.up{background:var(--ok);box-shadow:0 0 0 3px var(--ok-weak)}
+.stat.down{background:var(--crit);box-shadow:0 0 0 3px var(--crit-weak)}
+.stat.disc{background:var(--faint);box-shadow:0 0 0 3px rgba(132,148,140,.18)}
+.site-id{flex:1;min-width:0}
+.site-id .nm{font-weight:700;font-size:15.5px;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.site-id .url{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);background:var(--surface-3);padding:2px 6px;border-radius:5px}
+.head-chips{display:flex;gap:6px;align-items:center;flex:none}
+.mini{font-size:12px;font-weight:700;padding:3px 8px;border-radius:7px;display:inline-flex;align-items:center;gap:5px;font-variant-numeric:tabular-nums}
+.mini.upd{background:var(--warn-weak);color:var(--warn)}
+.mini.vul{background:var(--crit-weak);color:var(--crit)}
+.mini.core{background:var(--info-weak);color:var(--info)}
+.mini.clean{background:var(--ok-weak);color:var(--ok)}
+.chev{width:18px;height:18px;color:var(--faint);flex:none;transition:transform .18s}
+.site.open .chev{transform:rotate(180deg)}
+
+.body{display:none;padding:0 16px 16px;border-top:1px solid var(--border)}
+.site.open .body{display:block}
+.sec{padding-top:15px}
+.sec-h{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.sec-h .t{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.sec-h .ic{width:15px;height:15px;color:var(--faint)}
+.sec-h .n{margin-left:auto;font-size:11.5px;color:var(--faint);font-variant-numeric:tabular-nums}
+
+.rows{display:flex;flex-direction:column;gap:1px;background:var(--border);border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border)}
+.row{display:flex;align-items:center;gap:10px;padding:9px 11px;background:var(--surface);flex-wrap:wrap}
+.row .p-name{font-weight:600;font-size:13.5px;flex:1;min-width:130px;display:flex;align-items:center;gap:7px}
+.row .p-name .inact{font-size:10px;color:var(--faint);font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+.vert{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.vert .old{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--border-strong)}
+.vert .arw{color:var(--accent)}
+.vert .new{color:var(--ink);font-weight:600}
+.badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;padding:2px 7px;border-radius:5px;white-space:nowrap}
+.badge.lic{background:var(--accent-weak);color:var(--accent-ink)}
+.badge.vln{background:var(--crit);color:#fff}
+.badge.core{background:var(--info);color:#fff}
+
+.core-line{display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface-2);flex-wrap:wrap}
+.core-line .wp{width:24px;height:24px;flex:none;color:var(--info)}
+.core-line.ok{background:var(--ok-weak);border-color:transparent}
+.core-line.ok .wp{color:var(--ok)}
+.core-txt{flex:1;min-width:120px}
+.core-txt .k{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:600}
+
+.empty-note{font-size:12.5px;color:var(--faint);padding:8px 2px;font-style:italic}
+.noresults{text-align:center;padding:60px 20px;color:var(--muted)}
+.noresults svg{width:40px;height:40px;color:var(--faint);margin-bottom:10px}
+
+footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--border);color:var(--muted);font-size:12.5px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.demo-flag{display:inline-flex;align-items:center;gap:7px;background:var(--warn-weak);color:var(--warn);font-weight:700;font-size:12px;padding:5px 11px;border-radius:8px;border:1px solid color-mix(in srgb,var(--warn) 30%,transparent)}
+
+/* ---- refresh modal ---- */
+.modal{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:20px;background:rgba(9,16,13,.55);backdrop-filter:blur(3px)}
+.modal-card{position:relative;width:100%;max-width:430px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 22px 20px}
+.modal-x{position:absolute;top:12px;right:14px;background:none;border:none;font-size:22px;line-height:1;color:var(--faint);cursor:pointer;padding:2px 6px;border-radius:6px}
+.modal-x:hover{color:var(--ink);background:var(--surface-3)}
+.modal-h{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.modal-h h3{font-size:17px;letter-spacing:-.01em}
+.modal-age{font-size:13px;color:var(--muted);margin:0 0 14px;padding:9px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:9px}
+.modal-p{font-size:13.5px;color:var(--ink);margin:0 0 11px;line-height:1.5}
+.copybox{display:flex;align-items:stretch;gap:8px;margin-bottom:13px}
+.copybox code{flex:1;font-family:var(--mono);font-size:13px;background:var(--surface-2);border:1px dashed var(--border-strong);border-radius:9px;padding:10px 12px;color:var(--ink);display:flex;align-items:center}
+.copybox button{font:inherit;font-size:13px;font-weight:700;cursor:pointer;border:none;border-radius:9px;padding:0 15px;background:var(--accent);color:#fff;flex:none}
+.copybox button:hover{background:var(--accent-ink)}
+.modal-note{font-size:12px;color:var(--faint);margin:0;line-height:1.5}
+
+@keyframes nspin{to{transform:rotate(360deg)}}
+.iconbtn.spin svg{animation:nspin .8s linear infinite}
+.bar .iconbtn.spin{color:var(--hl);border-color:var(--hl)}
+
+@media (max-width:820px){
+  .kpis{grid-template-columns:repeat(3,1fr)}
+  .grid{grid-template-columns:1fr}
+}
+@media (max-width:460px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .head-chips .mini span.lbl{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ===================== Nibble Edge brand ===================== */
+:root{
+  --sans:"Work Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"Overpass Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --brand:#ffd400;
+  --accent:#00a06a; --accent-ink:#007a50; --accent-weak:rgba(0,160,106,.13);
+  --ok:#00a06a; --ok-weak:rgba(0,160,106,.13);
+}
+:root:not([data-theme="light"]){ @media (prefers-color-scheme:dark){
+  --bg:#0b0c0b; --surface:#151715; --surface-2:#1b1e1b; --surface-3:#232722;
+  --border:#2a2e29; --border-strong:#3a3f38;
+  --ink:#eef1ec; --muted:#a4afa6; --faint:#727c73;
+  --brand:#ffee00;
+  --accent:#00d084; --accent-ink:#5fe6ab; --accent-weak:rgba(0,208,132,.16);
+  --ok:#00d084; --ok-weak:rgba(0,208,132,.16);
+}}
+:root[data-theme="dark"]{
+  --bg:#0b0c0b; --surface:#151715; --surface-2:#1b1e1b; --surface-3:#232722;
+  --border:#2a2e29; --border-strong:#3a3f38;
+  --ink:#eef1ec; --muted:#a4afa6; --faint:#727c73;
+  --brand:#ffee00;
+  --accent:#00d084; --accent-ink:#5fe6ab; --accent-weak:rgba(0,208,132,.16);
+  --ok:#00d084; --ok-weak:rgba(0,208,132,.16);
+}
+/* brand typography accents */
+.pagehead h1{font-family:var(--mono);letter-spacing:-.01em;font-weight:700}
+.kpi .num{font-family:var(--mono)}
+.kpi .lbl{font-family:var(--mono);letter-spacing:.03em}
+.sec-h .t{font-family:var(--mono)}
+.brand-txt .n{font-family:var(--mono);letter-spacing:.05em;text-transform:uppercase;font-size:14px}
+.brand-txt .s{font-family:var(--mono)}
+/* brand-dark top bar (consistent across light & dark) */
+header.bar{background:#0c0e0c;border-bottom-color:#23271f;backdrop-filter:none}
+.bar .brand-txt .n{color:#fff}
+.bar .brand-txt .s{color:var(--brand)}
+.bar .search input{background:#181b18;border-color:#2c312b;color:#f0f2ef}
+.bar .search input::placeholder{color:#7d867e}
+.bar .search svg{color:#8b958c}
+.bar .iconbtn{background:#181b18;border-color:#2c312b;color:#e8ede8}
+.bar .iconbtn:hover{border-color:var(--accent);color:var(--accent)}
+.logo{width:38px;height:38px;border-radius:8px;overflow:hidden;background:none;box-shadow:0 0 0 1px rgba(255,255,255,.10);display:block;padding:0}
+.logo svg{width:100%;height:100%;display:block}
+/* keep the critical band + severity reds independent of the green accent */
+
+/* ==================== stylish enhancements ==================== */
+body{background-image:radial-gradient(1200px 420px at 100% -10%, color-mix(in srgb,var(--accent) 9%, transparent), transparent 68%), radial-gradient(900px 360px at -5% -8%, color-mix(in srgb,var(--brand) 7%, transparent), transparent 60%);background-attachment:fixed}
+
+/* header: brand yellow 'edge' line + logo glow */
+header.bar{border-bottom:2px solid var(--brand);box-shadow:0 8px 24px -16px rgba(0,0,0,.55)}
+.brand-txt .s{letter-spacing:.16em;font-size:10px}
+.logo{border-radius:9px;box-shadow:0 0 0 1px rgba(255,255,255,.14),0 6px 18px -8px rgba(255,242,0,.55)}
+.bar .iconbtn{transition:transform .12s,border-color .14s,color .14s}
+.bar .iconbtn:hover{transform:translateY(-1px)}
+
+/* page heading: mono + yellow edge underline */
+.pagehead h1{position:relative;font-size:26px}
+.pagehead h1::after{content:"";display:block;width:46px;height:4px;margin-top:11px;background:var(--brand);border-radius:2px}
+.asof{font-family:var(--mono);font-size:12px}
+
+/* KPI tiles: bolder, hover-lift, first tile featured in brand black */
+.kpis{gap:14px}
+.kpi{border-radius:16px;padding:16px 16px 15px;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+.kpi:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.kpi .num{font-size:30px;letter-spacing:-.02em}
+.kpi .rail{width:4px;border-radius:0 3px 3px 0}
+.kpi:first-child{background:linear-gradient(158deg,#16181500,#0c0d0c);background-color:#101210;border-color:#2b2f2a}
+.kpi:first-child .num{color:var(--brand)}
+.kpi:first-child .lbl{color:#c7d0c8}
+.kpi:first-child .rail{background:var(--brand)}
+
+/* env pills + filter chips micro-interactions */
+.envtabs{border-radius:12px}
+.envtab[aria-selected="true"]{box-shadow:var(--shadow-sm)}
+.chip{transition:transform .12s,border-color .12s,background .12s,color .12s}
+.chip:hover{transform:translateY(-1px)}
+
+/* action panel: rounder, thicker active underline */
+.panel{border-radius:16px}
+.ptab[aria-selected="true"]{border-bottom-width:3px}
+
+/* site cards: hover-lift + yellow edge when open */
+.site{border-radius:16px;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+.site:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--border-strong)}
+.site.open .site-head{border-left:3px solid var(--brand);padding-left:13px}
+.site-id .nm{font-size:16px}
+
+/* version transition -> paired pills */
+.vert{gap:8px}
+.vert .old{text-decoration:none;color:var(--faint);background:var(--surface-3);padding:1px 7px;border-radius:6px}
+.vert .arw{color:var(--accent);font-weight:700}
+.vert .new{color:var(--accent-ink);background:var(--accent-weak);padding:1px 7px;border-radius:6px;font-weight:700}
+
+/* badges + chips */
+.badge.lic{background:var(--accent-weak);color:var(--accent-ink);border:1px solid color-mix(in srgb,var(--accent) 32%,transparent)}
+.grp-count{border-radius:7px}
+.mini{border-radius:8px}
+
+/* focus + scrollbar polish */
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+*{scrollbar-width:thin;scrollbar-color:var(--border-strong) transparent}
+*::-webkit-scrollbar{width:10px;height:10px}
+*::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:20px;border:3px solid transparent;background-clip:content-box}
+*::-webkit-scrollbar-thumb:hover{background:var(--faint);background-clip:content-box}
+
+/* gentle one-time entrance (starts visible, respects reduced motion) */
+@media (prefers-reduced-motion:no-preference){
+  .kpi{animation:neRise .5s ease both}
+  .kpi:nth-child(2){animation-delay:.05s}.kpi:nth-child(3){animation-delay:.1s}
+  .kpi:nth-child(4){animation-delay:.15s}.kpi:nth-child(5){animation-delay:.2s}.kpi:nth-child(6){animation-delay:.25s}
+  @keyframes neRise{from{transform:translateY(9px);opacity:.35}to{transform:none;opacity:1}}
+}
+
+/* ====== brand theme (black/white/yellow boxes) + semantic indicators ====== */
+:root{
+  --bg:#ffffff; --surface:#ffffff; --surface-2:#f6f6f2; --surface-3:#ecebe4;
+  --border:rgba(0,0,0,.12); --border-strong:rgba(0,0,0,.26);
+  --ink:#000000; --muted:#55554f; --faint:#8b8b83;
+  --brand:#FFFF00; --hl:#FFFF00; --hl-weak:rgba(255,255,0,.26);
+  --accent:#00a06a; --accent-ink:#007a50; --accent-weak:rgba(0,160,106,.13);
+  --ok:#12924e; --ok-weak:rgba(18,146,78,.13);
+  --warn:#b26a00; --warn-weak:rgba(178,106,0,.14);
+  --info:#2f6fb0; --info-weak:rgba(47,111,176,.13);
+  --crit:#d5313a; --crit-weak:rgba(213,49,58,.12);
+  --shadow:0 1px 2px rgba(0,0,0,.06),0 10px 26px -14px rgba(0,0,0,.22);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.07);
+}
+:root:not([data-theme="light"]){ @media (prefers-color-scheme:dark){
+  --bg:#000000; --surface:#0c0c0c; --surface-2:#151513; --surface-3:#1e1e1b;
+  --border:rgba(255,255,255,.14); --border-strong:rgba(255,255,255,.30);
+  --ink:#ffffff; --muted:#b2b2aa; --faint:#7c7c74;
+  --brand:#FFFF00; --hl:#FFFF00; --hl-weak:rgba(255,255,0,.16);
+  --accent:#00d084; --accent-ink:#57e6a8; --accent-weak:rgba(0,208,132,.16);
+  --ok:#41c579; --ok-weak:rgba(65,197,121,.15);
+  --warn:#e0a94e; --warn-weak:rgba(224,169,78,.16);
+  --info:#7db4e8; --info-weak:rgba(125,180,232,.16);
+  --crit:#ff6b73; --crit-weak:rgba(255,107,115,.16);
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 14px 34px -16px rgba(0,0,0,.7);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.45);
+}}
+:root[data-theme="dark"]{
+  --bg:#000000; --surface:#0c0c0c; --surface-2:#151513; --surface-3:#1e1e1b;
+  --border:rgba(255,255,255,.14); --border-strong:rgba(255,255,255,.30);
+  --ink:#ffffff; --muted:#b2b2aa; --faint:#7c7c74;
+  --brand:#FFFF00; --hl:#FFFF00; --hl-weak:rgba(255,255,0,.16);
+  --accent:#00d084; --accent-ink:#57e6a8; --accent-weak:rgba(0,208,132,.16);
+  --ok:#41c579; --ok-weak:rgba(65,197,121,.15);
+  --warn:#e0a94e; --warn-weak:rgba(224,169,78,.16);
+  --info:#7db4e8; --info-weak:rgba(125,180,232,.16);
+  --crit:#ff6b73; --crit-weak:rgba(255,107,115,.16);
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 14px 34px -16px rgba(0,0,0,.7);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.45);
+}
+/* page wash: brand yellow only */
+body{background-image:radial-gradient(1100px 400px at 100% -10%, var(--hl-weak), transparent 62%);background-attachment:fixed}
+/* header icons hover in brand yellow (bar is always dark) */
+.bar .iconbtn:hover{border-color:var(--hl);color:var(--hl);transform:translateY(-1px)}
+/* featured first KPI tile = brand black + yellow (theme box) */
+.kpi:first-child{background:#000;border-color:var(--border-strong)}
+.kpi:first-child .num{color:var(--hl)}
+.kpi:first-child .lbl{color:#e6e6df}
+.kpi:first-child .rail{background:var(--hl)}
+/* active tab / env indicators + selected chip = brand yellow / ink (chrome) */
+.envtab[aria-selected="true"]{background:var(--surface);box-shadow:inset 0 -2px 0 var(--hl),var(--shadow-sm)}
+.ptab[aria-selected="true"]{border-bottom-color:var(--hl);color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip[aria-pressed="true"] .c{background:rgba(127,127,127,.35);color:var(--bg)}
+/* focus rings */
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+/* ==================== glass material ==================== */
+:root{
+  --surface:rgba(255,255,255,.58); --surface-2:rgba(255,255,255,.40); --surface-3:rgba(0,0,0,.055);
+  --border:rgba(0,0,0,.10); --border-strong:rgba(0,0,0,.20);
+  --glass-sheen:rgba(255,255,255,.70); --glass-floor:rgba(0,0,0,.05); --bar-glass:rgba(9,11,9,.90);
+  --glass-blur:blur(18px) saturate(165%);
+}
+:root:not([data-theme="light"]){ @media (prefers-color-scheme:dark){
+  --surface:rgba(24,25,22,.52); --surface-2:rgba(34,36,32,.42); --surface-3:rgba(255,255,255,.07);
+  --border:rgba(255,255,255,.12); --border-strong:rgba(255,255,255,.24);
+  --glass-sheen:rgba(255,255,255,.10); --glass-floor:rgba(255,255,255,.05); --bar-glass:rgba(9,11,9,.62);
+}}
+:root[data-theme="dark"]{
+  --surface:rgba(24,25,22,.52); --surface-2:rgba(34,36,32,.42); --surface-3:rgba(255,255,255,.07);
+  --border:rgba(255,255,255,.12); --border-strong:rgba(255,255,255,.24);
+  --glass-sheen:rgba(255,255,255,.10); --glass-floor:rgba(255,255,255,.05); --bar-glass:rgba(9,11,9,.62);
+}
+/* brand-lit backdrop for the glass to refract */
+body{background-color:var(--bg);background-image:none}
+body::before{content:"";position:fixed;inset:-12%;z-index:-1;pointer-events:none;filter:saturate(120%);
+  background:
+    radial-gradient(680px 540px at 88% -6%, rgba(255,255,0,.22), transparent 60%),
+    radial-gradient(560px 520px at 3% 4%, rgba(255,255,0,.12), transparent 62%),
+    radial-gradient(820px 640px at 52% 114%, var(--glass-floor), transparent 60%);}
+
+/* frosted panels */
+.kpi,.panel,.site,.core-line,.modal-card,.envtabs{
+  backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  box-shadow:inset 0 1px 0 var(--glass-sheen), var(--shadow-sm)}
+.kpi:hover,.site:hover{box-shadow:inset 0 1px 0 var(--glass-sheen), var(--shadow)}
+.kpi:first-child{background:rgba(6,6,6,.74);background-image:none;border-color:var(--border-strong)}
+header.bar{background:var(--bar-glass);backdrop-filter:blur(20px) saturate(165%);-webkit-backdrop-filter:blur(20px) saturate(165%);border-bottom:2px solid var(--brand)}
+.chip,.sortsel{backdrop-filter:blur(10px) saturate(150%);-webkit-backdrop-filter:blur(10px) saturate(150%)}
+.bar .search input,.bar .iconbtn{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.16);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.bar .search input::placeholder{color:#9aa39b}
+/* rows read cleanly inside the frosted cards */
+.rows{background:var(--border);border-color:var(--border)}
+.row{background:var(--surface-2)}
+.grp{border-top-color:var(--border)}
+</style>
+
+</head>
+<body>
+<header class="bar">
+  <div class="bar-in">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 73" fill="none"><path d="M72 0H0V72.9231H72V0Z" fill="#FFFF00"></path><path d="M27.3466 46.058H33.4963V43.9166H27.3466V40.607H34.5345V38.4272H27.3466H26.0974H25.0205V51.8582H26.0974H27.3466H34.6303V49.6784H27.3466V46.058Z" fill="black"></path><path d="M44.8933 39.2447C43.9582 38.6997 42.8434 38.4272 41.5491 38.4272H36.8018V51.859H41.5491C42.8434 51.859 43.9582 51.5865 44.8933 51.0416C45.8284 50.4967 46.5429 49.7209 47.0366 48.715C47.5295 47.7092 47.7768 46.5189 47.7768 45.1427C47.7768 43.7665 47.5304 42.5608 47.0366 41.5606C46.5429 40.5613 45.8284 39.7896 44.8933 39.2438V39.2447ZM44.3553 48.52C43.6892 49.2926 42.6896 49.6784 41.3574 49.6784H39.1279V40.607H41.3574C42.6896 40.607 43.6892 40.9896 44.3553 41.7556C45.0214 42.5216 45.3548 43.6507 45.3548 45.1427C45.3548 46.6348 45.0214 47.7483 44.3553 48.52Z" fill="black"></path><path d="M58.8284 44.8706H55.2731V46.817H58.8139C58.7728 47.3383 58.6415 47.8131 58.416 48.2381C58.1405 48.757 57.7434 49.1624 57.2247 49.4545C56.706 49.7465 56.0939 49.8925 55.3891 49.8925C54.2744 49.8925 53.3932 49.4838 52.7464 48.6664C52.0996 47.849 51.7758 46.6808 51.7758 45.1627C51.7758 43.6445 52.1182 42.4249 52.8044 41.6197C53.4898 40.8154 54.3903 40.4132 55.5051 40.4132C56.3895 40.4132 57.1031 40.6408 57.6484 41.0944C58.1929 41.5488 58.5481 42.1843 58.7148 43.0025L61.0401 42.3605C60.8347 41.5039 60.4763 40.764 59.9641 40.1415C59.4518 39.5183 58.8235 39.0419 58.0809 38.7107C57.3375 38.3795 56.4918 38.2139 55.5437 38.2139C54.3259 38.2139 53.253 38.4929 52.3244 39.0509C51.3949 39.6088 50.6684 40.4067 50.1432 41.4452C49.618 42.4836 49.3555 43.7228 49.3555 45.1635C49.3555 46.6041 49.5987 47.8041 50.086 48.8426C50.5725 49.8811 51.2394 50.6789 52.0851 51.2369C52.9309 51.7949 53.8918 52.0739 54.9678 52.0739C55.9674 52.0739 56.8228 51.8308 57.534 51.3438C58.1349 50.9326 58.6133 50.3918 58.9717 49.7261L59.1191 51.8602H61.0989V44.8722H58.8308L58.8284 44.8706Z" fill="black"></path><path d="M64.6513 38.4272H63.5752V51.8582H64.6513H65.9005H72.0002V49.6784H65.9005V46.058H72.0002V43.9166H65.9005V40.607H72.0002V38.4272H65.9005H64.6513Z" fill="black"></path><path d="M17.8185 32.0432L12.4526 20.8491H11.1751H9.95649H8.91504V34.5852H11.1751V23.3911L16.541 34.5852H17.8185H19.0371H20.0786V20.8491H17.8185V32.0432Z" fill="black"></path><path d="M25.2476 20.8491H22.8691V34.5852H25.2476V20.8491Z" fill="black"></path><path d="M30.4164 34.585H33.6793C35.1597 34.585 36.3059 34.2269 37.1186 33.5098C37.9305 32.7936 38.3372 31.8644 38.3372 30.7231C38.3372 29.5818 37.9377 28.7261 37.1379 28.0359C36.7674 27.7162 36.3228 27.4714 35.8057 27.3001C36.1512 27.1606 36.4549 26.9852 36.715 26.7723C37.4681 26.1556 37.8451 25.3757 37.8451 24.4335C37.8451 23.7164 37.6679 23.0932 37.3143 22.5621C36.9607 22.0318 36.4557 21.6133 35.8008 21.3082C35.1452 21.0031 34.3591 20.8506 33.4425 20.8506H28.0371V34.5866H30.4156V34.585H30.4164ZM35.8999 30.4645C35.8999 31.0617 35.7034 31.5332 35.3103 31.8783C34.9173 32.2233 34.2818 32.3955 33.4038 32.3955H30.4164V28.5336H33.4038C34.2818 28.5336 34.9173 28.7024 35.3103 29.041C35.7034 29.3795 35.8999 29.8543 35.8999 30.4645ZM33.188 23.0385C33.9612 23.0385 34.5306 23.191 34.8979 23.4961C35.2644 23.8012 35.4481 24.2197 35.4481 24.75C35.4481 25.2803 35.2644 25.7126 34.8979 26.0438C34.5306 26.3758 33.9612 26.5414 33.188 26.5414H30.4164V23.0377H33.188V23.0385Z" fill="black"></path><path d="M42.7602 34.585H46.023C47.5035 34.585 48.6496 34.2269 49.4623 33.5098C50.2742 32.7936 50.681 31.8644 50.681 30.7231C50.681 29.5818 50.2815 28.7261 49.4816 28.0359C49.1111 27.7162 48.6665 27.4714 48.1494 27.3001C48.495 27.1606 48.7986 26.9852 49.0588 26.7723C49.8119 26.1556 50.1888 25.3757 50.1888 24.4335C50.1888 23.7164 50.0116 23.0932 49.658 22.5621C49.3044 22.0318 48.7994 21.6133 48.1446 21.3082C47.489 21.0031 46.7028 20.8506 45.7862 20.8506H40.3809V34.5866H42.7594V34.585H42.7602ZM48.2437 30.4645C48.2437 31.0617 48.0471 31.5332 47.6541 31.8783C47.261 32.2233 46.6255 32.3955 45.7476 32.3955H42.7602V28.5336H45.7476C46.6255 28.5336 47.261 28.7024 47.6541 29.041C48.0471 29.3795 48.2437 29.8543 48.2437 30.4645ZM45.5309 23.0385C46.3041 23.0385 46.8736 23.191 47.2409 23.4961C47.6074 23.8012 47.791 24.2197 47.791 24.75C47.791 25.2803 47.6074 25.7126 47.2409 26.0438C46.8736 26.3758 46.3041 26.5414 45.5309 26.5414H42.7594V23.0377H45.5309V23.0385Z" fill="black"></path><path d="M55.1031 20.8491H52.7246V34.5852H53.8257H55.1031H61.3929V32.3556H55.1031V20.8491Z" fill="black"></path><path d="M71.9999 23.0786V20.8491H65.7351H64.4577H63.3574V34.5852H64.4577H65.7351H71.9999V32.3556H65.7351V28.6528H71.9999V26.4633H65.7351V23.0786H71.9999Z" fill="black"></path></svg></div>
+      <div class="brand-txt">
+        <span class="n">WP Watch</span>
+        <span class="s">Nibble Edge</span>
+      </div>
+    </div>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Search sites or plugins…" autocomplete="off" aria-label="Search sites or plugins">
+    </div>
+    <button class="iconbtn" id="refresh" title="Refresh data" aria-label="Refresh data">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6"/></svg>
+    </button>
+    <button class="iconbtn" id="settings" title="API token" aria-label="API token"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7.5" cy="15.5" r="3.5"/><path d="m10 13 8-8m-2 0 2 2m-4 2 2 2"/></svg></button>
+    <button class="iconbtn" id="expand" title="Expand or collapse all sites" aria-label="Expand or collapse all sites">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></svg>
+    </button>
+    <button class="iconbtn" id="theme" title="Toggle theme" aria-label="Toggle theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="pagehead">
+    <div>
+      <h1>WordPress Maintenance</h1>
+      <p>Fleet health across every managed site — updates, patches and versions at a glance.</p>
+    </div>
+    <div class="asof"><span class="dot"></span><span id="asof"></span></div>
+  </div>
+
+  <div class="envtabs" id="envtabs" role="tablist" aria-label="Environment">
+    <button class="envtab" data-env="production" role="tab" aria-selected="true">Live <span class="c" id="e-prod">0</span></button>
+    <button class="envtab" data-env="staging" role="tab" aria-selected="false">Staging <span class="c" id="e-stag">0</span></button>
+    <button class="envtab" data-env="all" role="tab" aria-selected="false">All <span class="c" id="e-all">0</span></button>
+  </div>
+
+  <section class="kpis" id="kpis" aria-label="Summary metrics"></section>
+
+  <section class="panel" id="panel" hidden>
+    <div class="panel-tabs" role="tablist" aria-label="Fleet actions">
+      <button class="ptab" data-p="attention" role="tab" aria-selected="true">
+        <span class="pip pip-crit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></span>
+        Needs immediate attention <span class="cnt crit" id="att-cnt"></span>
+      </button>
+      <button class="ptab" data-p="updates" role="tab" aria-selected="false">
+        <span class="pip pip-warn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 2v6m6-6v6M6 8h12v3a6 6 0 0 1-12 0V8Zm6 9v5"/></svg></span>
+        Plugin updates <span class="cnt warn" id="upd-cnt"></span>
+      </button>
+      <button class="ptab" data-p="license" role="tab" aria-selected="false">
+        <span class="pip pip-lic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7.5" cy="15.5" r="3.5"/><path d="m10 13 8-8m-2 0 2 2m-4 2 2 2"/></svg></span>
+        License required <span class="cnt lic" id="lic-cnt"></span>
+      </button>
+    </div>
+    <div class="panel-body" id="p-attention"><div id="band-rows"></div></div>
+    <div class="panel-body" id="p-updates" hidden><div id="upd-rows"></div></div>
+    <div class="panel-body" id="p-license" hidden><div id="lic-rows"></div></div>
+  </section>
+
+  <div class="filters" id="filters">
+    <button class="chip" data-f="all" aria-pressed="true">All sites <span class="c" id="f-all">0</span></button>
+    <button class="chip" data-f="updates" aria-pressed="false">Plugin updates <span class="c" id="f-updates">0</span></button>
+    <button class="chip" data-f="critical" aria-pressed="false">Critical <span class="c" id="f-critical">0</span></button>
+    <button class="chip" data-f="license" aria-pressed="false">Needs license <span class="c" id="f-license">0</span></button>
+    <button class="chip" data-f="core" aria-pressed="false">Core outdated <span class="c" id="f-core">0</span></button>
+    <button class="chip" data-f="themes" aria-pressed="false">Theme updates <span class="c" id="f-themes">0</span></button>
+    <span class="spacer"></span>
+    <select class="sortsel" id="sort" aria-label="Sort sites">
+      <option value="attention">Sort: Most to fix</option>
+      <option value="name">Sort: Name (A–Z)</option>
+      <option value="vulns">Sort: Vulnerabilities</option>
+    </select>
+  </div>
+
+  <section class="grid" id="grid" aria-label="Sites"></section>
+  <div class="noresults" id="noresults" hidden>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <div>No sites match this view.</div>
+  </div>
+
+  <footer>
+    <span class="demo-flag" id="demo-flag">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+      Sample data — connect your WP Umbrella token to load live sites
+    </span>
+    <span id="foot-src">Source: WP Umbrella · refreshed on demand</span>
+  </footer>
+</main>
+
+<div class="modal" id="token-modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="tm-title">
+    <button class="modal-x" id="tm-close" aria-label="Close">&times;</button>
+    <div class="modal-h"><span class="pip pip-lic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7.5" cy="15.5" r="3.5"/><path d="m10 13 8-8m-2 0 2 2m-4 2 2 2"/></svg></span><h3 id="tm-title">Connect WP Umbrella</h3></div>
+    <p class="modal-p">Paste your WP Umbrella <b>public API token</b> (Profile &rarr; Generate my token). It is stored only in this browser &mdash; never in the file, and never shared.</p>
+    <div class="copybox"><input id="tok-input" type="password" placeholder="Paste API token" autocomplete="off" spellcheck="false"><button id="tok-save" type="button">Save &amp; refresh</button></div>
+    <p class="modal-note" id="tok-status"></p>
+    <p class="modal-note">Data is fetched directly from public-api.wp-umbrella.com in your browser. <a href="#" id="tok-clear">Remove saved token</a></p>
+  </div>
+</div>
+
+<script>
+const LS_TOKEN='nibble_wpu_token', LS_CACHE='nibble_wpu_cache';
+function getToken(){try{return localStorage.getItem(LS_TOKEN)||''}catch(e){return ''}}
+function setToken(t){try{localStorage.setItem(LS_TOKEN,t)}catch(e){}}
+function clearToken(){try{localStorage.removeItem(LS_TOKEN)}catch(e){}}
+function loadCache(){try{const s=localStorage.getItem(LS_CACHE);return s?JSON.parse(s):null}catch(e){return null}}
+function saveCache(d){try{localStorage.setItem(LS_CACHE,JSON.stringify(d))}catch(e){}}
+</script>
+
+<script>
+/* ============================================================
+   DATA
+   Shape mirrors what the live WP Umbrella fetch assembles from
+   /projects + /projects/{id}/plugins + /themes + /vulnerabilities.
+   Replace DATA with live results to go from demo → real.
+   ============================================================ */
+let DATA = loadCache() || ({"generatedAt":"2026-09-17T09:00:39.650Z","isDemo":false,"account":"Nibble Edge","coreLatest":"7.1","sites":[{"name":"AIIA","url":"staging.aiia.com.au","status":"down","label":"","core":{"current":"7.0.2","latest":"7.1"},"plugins":[{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"1.22.3","new":"1.22.4","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress GTM4WP – A Google Tag Manager (GTM) plugin for WordPress plugin <= 1.22.3 - Unauthenticated Stored Cross-Site Scripting vulnerability","cvss":7.1,"count":1}},{"name":"Media Cleaner","slug":"media-cleaner","current":"7.2.3","new":"7.2.5","active":true,"kind":"plugin"},{"name":"WP Contact Form Salesforce","slug":"cf7-salesforce","current":"1.5.0","new":"1.5.1","active":true,"kind":"plugin"},{"name":"WP Umbrella","slug":"wp-health","current":"2.25.1","new":"2.26.0","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress WP Umbrella plugin 2.24.2-2.26.2 - Cross Site Request Forgery (CSRF) vulnerability","cvss":5.4,"count":1}},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.0","new":"28.1","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Yoast SEO – Advanced SEO with real-time guidance and built-in AI plugin <= 28.0 - Authenticated (Author+) Stored Cross-Site Scripting vulnerability","cvss":6.5,"count":1}},{"name":"Export Import Menus","slug":"","current":"1.9.2","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Export Import Menus plugin <= 1.9.2 - Sensitive Data Exposure vulnerability","cvss":5.3,"count":1}},{"name":"Advanced Social Feeds Widget","slug":"","current":"1.7","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Advanced Social Feeds Widget & Shortcode plugin <= 1.7 - Admin+ Stored XSS vulnerability","cvss":5.9,"count":1}},{"name":"Modern Events Calendar Lite","slug":"","current":"5.17.1","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress Modern Events Calendar Lite plugin <= 6.3.0 - Unauthenticated SQL Injection vulnerability","cvss":9.3,"count":8}},{"name":"Object Sync for Salesforce","slug":"","current":"2.2.13","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress Object Sync for Salesforce plugin <= 2.2.13 - Unauthenticated SQL Injection vulnerability","cvss":9.3,"count":1}},{"name":"Smush","slug":"","current":"4.2.0","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress Smush plugin < 4.3.2 - Admin+ Network-Wide RCE vulnerability","cvss":9.1,"count":2}}],"themes":[{"name":"Twentytwentyfour","slug":"twentytwentyfour","current":"1.5","latest":"1.5","active":false},{"name":"Twentytwentythree","slug":"twentytwentythree","current":"1.6","latest":"1.6","active":false},{"name":"Divi","slug":"Divi","current":"4.27.7","latest":"4.27.7","active":false},{"name":"Divi Child","slug":"divi-child","current":"1.0.0","latest":"1.0.0","active":true},{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false}]},{"name":"AIIA","url":"aiia.com.au","status":"disc","label":"","core":{"current":"7.0.1","latest":"7.1"},"plugins":[{"name":"Advanced Custom Fields","slug":"advanced-custom-fields","current":"6.8.5","new":"6.8.6","active":true,"kind":"plugin"},{"name":"Divi Torque Lite","slug":"addons-for-divi","current":"4.7.0","new":"4.8.1","active":true,"kind":"plugin"},{"name":"Filester - File Manager Pro","slug":"filester","current":"2.1.1","new":"2.1.2","active":true,"kind":"plugin"},{"name":"Media Cleaner","slug":"media-cleaner","current":"7.1.1","new":"7.2.3","active":true,"kind":"plugin"},{"name":"Redirection","slug":"redirection","current":"5.8.1","new":"5.9.0","active":true,"kind":"plugin"},{"name":"WP Umbrella","slug":"wp-health","current":"2.25.0","new":"2.25.1","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress WP Umbrella plugin 2.24.2-2.26.2 - Cross Site Request Forgery (CSRF) vulnerability","cvss":5.4,"count":1}},{"name":"Advanced Social Feeds Widget","slug":"","current":"1.7","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Advanced Social Feeds Widget & Shortcode plugin <= 1.7 - Admin+ Stored XSS vulnerability","cvss":5.9,"count":1}},{"name":"Modern Events Calendar Lite","slug":"","current":"5.17.1","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress Modern Events Calendar Lite plugin <= 6.3.0 - Unauthenticated SQL Injection vulnerability","cvss":9.3,"count":8}},{"name":"Object Sync for Salesforce","slug":"","current":"2.2.13","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress Object Sync for Salesforce plugin <= 2.2.13 - Unauthenticated SQL Injection vulnerability","cvss":9.3,"count":1}},{"name":"Smush","slug":"","current":"4.2.0","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress Smush plugin < 4.3.2 - Admin+ Network-Wide RCE vulnerability","cvss":9.1,"count":2}},{"name":"WPForms","slug":"","current":"1.9.7.3","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress WPForms Pro plugin <= 1.10.1.1 - Unauthenticated Arbitrary File Write vulnerability","cvss":9,"count":2}},{"name":"All-in-One WP Migration and Backup","slug":"","current":"7.106","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress All-in-One WP Migration and Backup plugin <= 7.109 - Unauthenticated Second-Order SQL Injection via Archive Restore to Remote Code Execution vulnerability","cvss":8.8,"count":3}},{"name":"Export Import Menus","slug":"","current":"1.9.2","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Export Import Menus plugin <= 1.9.2 - Sensitive Data Exposure vulnerability","cvss":5.3,"count":1}},{"name":"Yoast SEO","slug":"","current":"28.0","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Yoast SEO – Advanced SEO with real-time guidance and built-in AI plugin <= 28.0 - Authenticated (Author+) Stored Cross-Site Scripting vulnerability","cvss":6.5,"count":1}},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"","current":"1.22.3","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress GTM4WP – A Google Tag Manager (GTM) plugin for WordPress plugin <= 1.22.3 - Unauthenticated Stored Cross-Site Scripting vulnerability","cvss":7.1,"count":1}}],"themes":[{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false},{"name":"Twentytwentyfour","slug":"twentytwentyfour","current":"1.5","latest":"1.5","active":false},{"name":"Divi Child","slug":"divi-child","current":"1.0.0","latest":"1.0.0","active":true},{"name":"Divi","slug":"Divi","current":"4.27.7","latest":"4.27.7","active":false},{"name":"Twentytwentythree","slug":"twentytwentythree","current":"1.6","latest":"1.6","active":false}]},{"name":"Auscap Asset Management","url":"auscapam.com","status":"up","label":"","core":{"current":"7.1","latest":"7.1"},"plugins":[{"name":"Advanced Custom Fields PRO","slug":"advanced-custom-fields-pro","current":"6.8.9","new":"6.8.10","active":true,"kind":"plugin"},{"name":"Divi FilterGrid","slug":"dp-divi-filtergrid","current":"4.3","new":"4.3.2","active":true,"kind":"plugin"},{"name":"Filester - File Manager Pro","slug":"filester","current":"2.1.2","new":"2.1.4","active":true,"kind":"plugin"},{"name":"FluentSMTP","slug":"fluent-smtp","current":"2.3.1","new":"2.4.0","active":true,"kind":"plugin"},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"1.22.5","new":"2.0.2","active":true,"kind":"plugin"},{"name":"Gravity Forms","slug":"gravityforms","current":"3.1.0.2","new":"3.1.1","active":true,"kind":"plugin"},{"name":"Gravity Forms Quiz Add-On","slug":"gravityformsquiz","current":"4.2.1","new":"4.3.1","active":true,"kind":"plugin"},{"name":"Imagify","slug":"imagify","current":"2.3.3","new":"2.3.4","active":true,"kind":"plugin"},{"name":"Popup Maker","slug":"popup-maker","current":"1.24.0","new":"1.25.0","active":true,"kind":"plugin"},{"name":"Post Types Order","slug":"post-types-order","current":"2.5","new":"2.5.3","active":true,"kind":"plugin"},{"name":"Simple History","slug":"simple-history","current":"5.31.0","new":"5.33.0","active":true,"kind":"plugin"},{"name":"WP Umbrella","slug":"wp-health","current":"2.27.2","new":"2.27.3","active":true,"kind":"plugin"},{"name":"Wordfence Security","slug":"wordfence","current":"9.0.0","new":"9.0.1","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.3","new":"28.5","active":true,"kind":"plugin"},{"name":"Genesis","slug":"","current":"2.10.1","new":"2.10.1","active":true,"kind":"theme","vuln":{"severity":"medium","title":"WordPress Open Source Genesis Framework plugin <= 3.6.0 - Authenticated (Contributor+) Stored Cross-Site Scripting via Multiple Shortcodes vulnerability","cvss":6.5,"count":1}}],"themes":[{"name":"Auscaps","slug":"auscaps","current":"1.0.1","latest":"1.0.1","active":true},{"name":"Twentytwentythree","slug":"twentytwentythree","current":"1.7","latest":"1.7","active":false},{"name":"Genesis","slug":"genesis","current":"2.10.1","latest":"2.10.1","active":false},{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false},{"name":"Divi","slug":"Divi","current":"4.27.9","latest":"4.27.9","active":false},{"name":"Auscap.Bk","slug":"auscap.bk","current":"1.0","latest":"1.0","active":false},{"name":"Twentytwentyfour","slug":"twentytwentyfour","current":"1.6","latest":"1.6","active":false}]},{"name":"Australian Eagle","url":"austeagle.com","status":"up","label":"","core":{"current":"7.0.4","latest":"7.1"},"plugins":[],"themes":[{"name":"Divi","slug":"Divi","current":"4.27.8","latest":"4.27.8","active":false},{"name":"Divi Child Theme","slug":"divi-child-theme","current":"1.0","latest":"1.0","active":true},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false}]},{"name":"canopyblue","url":"canopybluestg.wpenginepowered.com","status":"disc","label":"","core":{"current":"7.1","latest":"7.1"},"plugins":[{"name":"Activity Log","slug":"aryo-activity-log","current":"2.12.1","new":"2.13.0","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Activity Log plugin <= 2.13.1 - Cross Site Request Forgery (CSRF) vulnerability","cvss":7.1,"count":1}},{"name":"Smush","slug":"wp-smushit","current":"4.3.0","new":"4.3.2","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress Smush plugin < 4.3.2 - Admin+ Network-Wide RCE vulnerability","cvss":9.1,"count":1}},{"name":"WP Rocket","slug":"","current":"3.23.2.2","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress WP Rocket plugin 3.23.1-3.23.3.2 - Unauthenticated Sensitive Data Exposure vulnerability","cvss":7.5,"count":1}}],"themes":[{"name":"Twenty Twenty One","slug":"twenty-twenty-one","current":"2.1","latest":"2.1","active":true},{"name":"Cblue","slug":"cblue","current":"0.0.1","latest":"0.0.1","active":false},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false},{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false},{"name":"Twentytwentyfour","slug":"twentytwentyfour","current":"1.5","latest":"1.6","active":false}]},{"name":"canopyblue","url":"canopyblue.co","status":"up","label":"","core":{"current":"7.1","latest":"7.1"},"plugins":[{"name":"Activity Log","slug":"aryo-activity-log","current":"2.13.1","new":"2.15.0","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Activity Log plugin <= 2.13.1 - Cross Site Request Forgery (CSRF) vulnerability","cvss":7.1,"count":1}},{"name":"Advanced Custom Fields PRO","slug":"advanced-custom-fields-pro","current":"6.8.8","new":"6.8.10","active":true,"kind":"plugin"},{"name":"Elementor","slug":"elementor","current":"4.2.3","new":"4.2.4","active":true,"kind":"plugin"},{"name":"Elementor Pro","slug":"elementor-pro","current":"4.2.2","new":"4.2.3","active":true,"kind":"plugin"},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"1.22.5","new":"2.0.2","active":true,"kind":"plugin"},{"name":"Post Types Order","slug":"post-types-order","current":"2.5","new":"2.5.3","active":true,"kind":"plugin"},{"name":"Qi Addons for Elementor","slug":"qi-addons-for-elementor","current":"1.11","new":"1.11.1","active":false,"kind":"plugin"},{"name":"Redirection","slug":"redirection","current":"5.9.0","new":"5.10.0","active":true,"kind":"plugin"},{"name":"Site Kit by Google","slug":"google-site-kit","current":"1.186.0","new":"1.187.0","active":false,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Site Kit by Google plugin <= 1.186.0 - Cross Site Request Forgery (CSRF) vulnerability","cvss":4.3,"count":1}},{"name":"Smush","slug":"wp-smushit","current":"4.3.2","new":"4.3.3","active":true,"kind":"plugin"},{"name":"WP Umbrella","slug":"wp-health","current":"2.27.2","new":"2.27.3","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.3","new":"28.5","active":true,"kind":"plugin"}],"themes":[{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false},{"name":"Twentytwentyfour","slug":"twentytwentyfour","current":"1.6","latest":"1.6","active":false},{"name":"Cblue","slug":"cblue","current":"0.0.1","latest":"0.0.1","active":false},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false},{"name":"Twenty Twenty One","slug":"twenty-twenty-one","current":"2.2","latest":"2.2","active":true}]},{"name":"Cemintel","url":"www.cemintel.com.au","status":"up","label":"","core":{"current":"7.1","latest":"7.1"},"plugins":[{"name":"Country State City Dropdown CF7","slug":"country-state-city-auto-dropdown","current":"2.7.6","new":"2.8.2","active":true,"kind":"plugin"},{"name":"Divi MadMenu","slug":"divi-mad-menu","current":"2.2.4","new":"2.5.0","active":true,"kind":"plugin"},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"2.0.1","new":"2.0.2","active":true,"kind":"plugin"},{"name":"Kadence Security Basic","slug":"better-wp-security","current":"10.0.3","new":"10.0.4","active":true,"kind":"plugin"},{"name":"Smush Pro","slug":"wpmudev_install-912164","current":"4.3.2","new":"4.3.3","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.4","new":"28.5","active":true,"kind":"plugin"}],"themes":[{"name":"Divi Child","slug":"Divi-Child","current":"1.0.1","latest":"1.0.1","active":true},{"name":"Divi","slug":"Divi","current":"4.27.8","latest":"4.27.8","active":false},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false},{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false},{"name":"Twentytwentyfour","slug":"twentytwentyfour","current":"1.6","latest":"1.6","active":false}]},{"name":"Cemintel","url":"www.cemintel.co.nz","status":"up","label":"","core":{"current":"7.1","latest":"7.1"},"plugins":[{"name":"Country State City Dropdown CF7","slug":"country-state-city-auto-dropdown","current":"2.7.6","new":"2.8.2","active":true,"kind":"plugin"},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"2.0.1","new":"2.0.2","active":true,"kind":"plugin"},{"name":"Kadence Security Basic","slug":"better-wp-security","current":"10.0.3","new":"10.0.4","active":true,"kind":"plugin"},{"name":"Smush Pro","slug":"wpmudev_install-912164","current":"4.3.2","new":"4.3.3","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.4","new":"28.5","active":true,"kind":"plugin"}],"themes":[{"name":"Developer Starter Starter94","slug":"developer-starter-starter94","current":"1.0","latest":"1.0","active":false},{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false},{"name":"Starter Starter Starter19","slug":"starter-starter-starter19","current":"1.0","latest":"1.0","active":false},{"name":"Divi Child","slug":"Divi-Child","current":"1.0.1","latest":"1.0.1","active":true},{"name":"Developer Starter Starter44","slug":"developer-starter-starter44","current":"1.0","latest":"1.0","active":false},{"name":"Twentytwentyfour","slug":"twentytwentyfour","current":"1.6","latest":"1.6","active":false},{"name":"Developer Starter Starter74","slug":"developer-starter-starter74","current":"1.0","latest":"1.0","active":false},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false},{"name":"Divi","slug":"Divi","current":"4.27.8","latest":"4.27.8","active":false}]},{"name":"Cemintel","url":"cemintelnzstg.wpenginepowered.com","status":"disc","label":"","core":{"current":"7.0.4","latest":"7.1"},"plugins":[{"name":"Advanced Custom Fields PRO","slug":"advanced-custom-fields-pro","current":"6.8.7","new":"6.8.9","active":true,"kind":"plugin"},{"name":"Agile Store Locator","slug":"agile-store-locator","current":"4.11.13","new":"5.4.2","active":true,"kind":"plugin"},{"name":"All-in-One WP Migration and Backup","slug":"all-in-one-wp-migration","current":"7.107","new":"7.110","active":false,"kind":"plugin","vuln":{"severity":"high","title":"WordPress All-in-One WP Migration and Backup plugin <= 7.109 - Unauthenticated Second-Order SQL Injection via Archive Restore to Remote Code Execution vulnerability","cvss":8.8,"count":3}},{"name":"AltText.ai","slug":"alttext-ai","current":"1.10.36","new":"1.10.37","active":true,"kind":"plugin"},{"name":"Asset CleanUp: Page Speed Booster","slug":"wp-asset-clean-up","current":"1.4.0.4","new":"1.4.0.5","active":false,"kind":"plugin"},{"name":"Category Order and Taxonomy Terms Order","slug":"taxonomy-terms-order","current":"1.9.9.1","new":"2.0","active":true,"kind":"plugin"},{"name":"Contact Form 7","slug":"contact-form-7","current":"6.1.6","new":"6.1.7","active":true,"kind":"plugin"},{"name":"Country State City Dropdown CF7","slug":"country-state-city-auto-dropdown","current":"2.8.1","new":"2.8.2","active":true,"kind":"plugin"},{"name":"Divi MadMenu","slug":"divi-mad-menu","current":"2.2.4","new":"2.5.0","active":true,"kind":"plugin"},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"1.22.5","new":"2.0.0","active":true,"kind":"plugin"},{"name":"Pods - Custom Content Types and Fields","slug":"pods","current":"3.3.9.1","new":"3.3.9.2","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress Pods plugin 3.3-3.3.9.1 - Unauthenticated Privilege Escalation vulnerability","cvss":9.8,"count":3}},{"name":"Popups for Divi","slug":"popups-for-divi","current":"3.2.7","new":"3.2.8","active":true,"kind":"plugin"},{"name":"Post Types Order","slug":"post-types-order","current":"2.4.8","new":"2.5.1","active":true,"kind":"plugin"},{"name":"Redirection","slug":"redirection","current":"5.9.0","new":"5.10.0","active":true,"kind":"plugin"},{"name":"TablePress","slug":"tablepress","current":"3.3.3","new":"3.3.4","active":true,"kind":"plugin"},{"name":"WP Rocket","slug":"wp-rocket","current":"3.23.1.1","new":"3.23.3.3","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress WP Rocket plugin 3.23.1-3.23.3.2 - Unauthenticated Sensitive Data Exposure vulnerability","cvss":7.5,"count":1}},{"name":"WP Umbrella","slug":"wp-health","current":"2.27.0","new":"2.27.2","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.2","new":"28.4","active":true,"kind":"plugin"},{"name":"WPMU DEV Dashboard","slug":"","current":"5.0.0","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress WPMU DEV Dashboard plugin <= 5.0.1 - Authentication Bypass to Administrator via SSO HMAC Canonicalization Confusion vulnerability","cvss":9.8,"count":2}}],"themes":[{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false},{"name":"Twentytwentyfour","slug":"twentytwentyfour","current":"1.5","latest":"1.6","active":false},{"name":"Divi Child","slug":"Divi-Child","current":"1.0.1","latest":"1.0.1","active":true},{"name":"Divi","slug":"Divi","current":"4.27.7","latest":"4.27.7","active":false},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false}]},{"name":"Cemintel","url":"cemintelstg.wpengine.com","status":"disc","label":"","core":{"current":"6.9.4","latest":"7.1"},"plugins":[{"name":"Agile Store Locator","slug":"agile-store-locator","current":"4.9.10","new":"4.9.18","active":true,"kind":"plugin"},{"name":"Smush Pro","slug":"wpmudev_install-912164","current":"3.21.0","new":"3.23.4","active":true,"kind":"plugin"},{"name":"TablePress","slug":"","current":"3.2.8","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress TablePress plugin <= 3.3.1 - Reflected Cross Site Scripting (XSS) vulnerability","cvss":7.1,"count":1}},{"name":"WP Activity Log","slug":"","current":"5.6.1","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress WP Activity Log plugin <= 5.6.3.1 - PHP Object Injection vulnerability","cvss":9.8,"count":4}},{"name":"Asset CleanUp: Page Speed Booster","slug":"","current":"1.4.0.3","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Asset CleanUp: Page Speed Booster plugin <= 1.4.0.3 - Broken Access Control vulnerability","cvss":5.3,"count":1}},{"name":"Pods - Custom Content Types and Fields","slug":"","current":"3.3.8","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress Pods plugin <= 3.3.9 - Unauthenticated Privilege Escalation vulnerability","cvss":9.8,"count":6}},{"name":"All-in-One WP Migration and Backup","slug":"","current":"7.103","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress All-in-One WP Migration and Backup plugin <= 7.109 - Unauthenticated Second-Order SQL Injection via Archive Restore to Remote Code Execution vulnerability","cvss":8.8,"count":3}},{"name":"Contact Form 7 Campaign Monitor Extension","slug":"","current":"0.4.67","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Contact Form 7 Campaign Monitor Extension plugin <= 0.4.67 - Arbitrary File Deletion vulnerability","cvss":5.3,"count":1}},{"name":"Yoast SEO","slug":"","current":"27.2","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Yoast SEO – Advanced SEO with real-time guidance and built-in AI plugin <= 28.0 - Authenticated (Author+) Stored Cross-Site Scripting vulnerability","cvss":6.5,"count":1}},{"name":"WP Rocket","slug":"","current":"3.21.0.1","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress WP Rocket plugin <= 3.21.0.1 - Unauthenticated Stored Cross-Site Scripting via Picture Source Attributes in rocket_beacon Endpoint vulnerability","cvss":7.1,"count":1}},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"","current":"1.22.3","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress GTM4WP – A Google Tag Manager (GTM) plugin for WordPress plugin <= 1.22.3 - Unauthenticated Stored Cross-Site Scripting vulnerability","cvss":7.1,"count":1}},{"name":"WPMU DEV Dashboard","slug":"","current":"4.11.30","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress WPMU DEV Dashboard plugin <= 5.0.1 - Authentication Bypass to Administrator via SSO HMAC Canonicalization Confusion vulnerability","cvss":9.8,"count":2}},{"name":"SVG Support","slug":"","current":"2.5.14","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress SVG Support plugin < 2.5.17 - Author+ Stored XSS via .svgz Sanitization Bypass vulnerability","cvss":5.9,"count":2}},{"name":"Enable Media Replace","slug":"","current":"4.1.8","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Enable Media Replace plugin <= 4.1.8 - Authenticated (Author+) Stored Cross-Site Scripting vulnerability","cvss":5.9,"count":2}}],"themes":[{"name":"Divi Child","slug":"Divi-Child","current":"1.0.1","latest":"1.0.1","active":true},{"name":"Divi","slug":"Divi","current":"4.27.6","latest":"4.27.6","active":false},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false},{"name":"Twentytwentyfour","slug":"twentytwentyfour","current":"1.4","latest":"1.4","active":false},{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.4","latest":"1.4","active":false}]},{"name":"CSR Dwelling","url":"csrdwellingstg.wpengine.com","status":"disc","label":"","core":{"current":"7.0.2","latest":"7.1"},"plugins":[{"name":"WPBakery Page Builder","slug":"js_composer","current":"6.10.0","new":"9.0","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress WPBakery plugin <= 7.7 - Authenticated (Author+) Local File Inclusion vulnerability","cvss":6.6,"count":15}},{"name":"Export & Import WPBakery Page Builder","slug":"","current":"1.0.2","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Export & Import WPBakery Page Builder plugin <= 1.0.2 - CSRF to Stored XSS vulnerability","cvss":7.1,"count":1}},{"name":"WP Umbrella","slug":"","current":"2.26.0","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress WP Umbrella plugin 2.24.2-2.26.2 - Cross Site Request Forgery (CSRF) vulnerability","cvss":5.4,"count":1}},{"name":"Contact Form 7 Campaign Monitor Extension","slug":"","current":"0.4.67","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Contact Form 7 Campaign Monitor Extension plugin <= 0.4.67 - Arbitrary File Deletion vulnerability","cvss":5.3,"count":1}},{"name":"Contact Form 7 Captcha","slug":"","current":"0.1.7","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Contact Form 7 Captcha plugin 0.1.7-0.1.8 - Unauthenticated Arbitrary Shortcode Execution vulnerability","cvss":6.5,"count":1}},{"name":"3D FlipBook : DearFlip Lite","slug":"","current":"2.4.30","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Dear Flipbook plugin <= 2.4.30 - Authenticated (Contributor+) Stored Cross-Site Scripting via '.df-element' Element Inner HTML vulnerability","cvss":6.5,"count":2}},{"name":"All-in-One WP Migration and Backup","slug":"","current":"7.107","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress All-in-One WP Migration and Backup plugin <= 7.109 - Unauthenticated Second-Order SQL Injection via Archive Restore to Remote Code Execution vulnerability","cvss":8.8,"count":3}}],"themes":[{"name":"Twentytwentyone","slug":"twentytwentyone","current":"2.8","latest":"2.8","active":false},{"name":"Twentytwentytwo","slug":"twentytwentytwo","current":"2.1","latest":"2.1","active":false},{"name":"==Dwellingcsr","slug":"==dwellingcsr","current":"2.0.0","latest":"2.0.0","active":true},{"name":"Dwellingcsr","slug":"dwellingcsr","current":"2.0.0","latest":"2.0.0","active":true},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false},{"name":"Sage/Resources","slug":"sage/resources","current":"9.0.10","latest":"9.0.10","active":false},{"name":"Twentytwenty","slug":"twentytwenty","current":"3.1","latest":"3.1","active":false}]},{"name":"CSR Dwelling","url":"dwelling.csr.com.au","status":"disc","label":"","core":{"current":"7.0.2","latest":"7.1"},"plugins":[{"name":"WPBakery Page Builder","slug":"js_composer","current":"6.10.0","new":"9.0","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress WPBakery plugin <= 7.7 - Authenticated (Author+) Local File Inclusion vulnerability","cvss":6.6,"count":15}},{"name":"WP Umbrella","slug":"","current":"2.26.0","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress WP Umbrella plugin 2.24.2-2.26.2 - Cross Site Request Forgery (CSRF) vulnerability","cvss":5.4,"count":1}},{"name":"3D FlipBook : DearFlip Lite","slug":"","current":"2.4.30","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Dear Flipbook plugin <= 2.4.30 - Authenticated (Contributor+) Stored Cross-Site Scripting via '.df-element' Element Inner HTML vulnerability","cvss":6.5,"count":2}},{"name":"Activity Log","slug":"","current":"2.11.2","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Activity Log plugin <= 2.13.1 - Cross Site Request Forgery (CSRF) vulnerability","cvss":7.1,"count":1}},{"name":"All-in-One WP Migration and Backup","slug":"","current":"7.107","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress All-in-One WP Migration and Backup plugin <= 7.109 - Unauthenticated Second-Order SQL Injection via Archive Restore to Remote Code Execution vulnerability","cvss":8.8,"count":3}},{"name":"Contact Form 7 Captcha","slug":"","current":"0.1.7","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Contact Form 7 Captcha plugin 0.1.7-0.1.8 - Unauthenticated Arbitrary Shortcode Execution vulnerability","cvss":6.5,"count":1}},{"name":"Export & Import WPBakery Page Builder","slug":"","current":"1.0.2","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Export & Import WPBakery Page Builder plugin <= 1.0.2 - CSRF to Stored XSS vulnerability","cvss":7.1,"count":1}},{"name":"Contact Form 7 Campaign Monitor Extension","slug":"","current":"0.4.67","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Contact Form 7 Campaign Monitor Extension plugin <= 0.4.67 - Arbitrary File Deletion vulnerability","cvss":5.3,"count":1}}],"themes":[{"name":"Twentytwentytwo","slug":"twentytwentytwo","current":"2.1","latest":"2.1","active":false},{"name":"Twentytwenty","slug":"twentytwenty","current":"3.1","latest":"3.1","active":false},{"name":"Twentytwentyone","slug":"twentytwentyone","current":"2.8","latest":"2.8","active":false},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false},{"name":"==Dwellingcsr","slug":"==dwellingcsr","current":"2.0.0","latest":"2.0.0","active":true},{"name":"Sage/Resources","slug":"sage/resources","current":"9.0.10","latest":"9.0.10","active":false},{"name":"Dwellingcsr","slug":"dwellingcsr","current":"2.0.0","latest":"2.0.0","active":true}]},{"name":"CSR Hebel","url":"hebeldev.wpenginepowered.com","status":"disc","label":"","core":{"current":"7.0.4","latest":"7.1"},"plugins":[{"name":"Activity Log","slug":"aryo-activity-log","current":"2.11.2","new":"2.14.1","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Activity Log plugin <= 2.13.1 - Cross Site Request Forgery (CSRF) vulnerability","cvss":7.1,"count":1}},{"name":"Advanced Custom Fields PRO","slug":"advanced-custom-fields-pro","current":"6.8.7","new":"6.8.9","active":true,"kind":"plugin"},{"name":"Category Order and Taxonomy Terms Order","slug":"taxonomy-terms-order","current":"1.9.9.1","new":"2.0","active":true,"kind":"plugin"},{"name":"Contact Form 7","slug":"contact-form-7","current":"6.1.6","new":"6.1.7","active":true,"kind":"plugin"},{"name":"Country State City Dropdown CF7","slug":"country-state-city-auto-dropdown","current":"2.8.1","new":"2.8.2","active":true,"kind":"plugin"},{"name":"Divi MadMenu","slug":"divi-mad-menu","current":"2.2.4","new":"2.5.0","active":true,"kind":"plugin"},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"1.22.5","new":"2.0.0","active":true,"kind":"plugin"},{"name":"Genesis Blocks","slug":"genesis-blocks","current":"3.1.10","new":"3.1.11","active":true,"kind":"plugin"},{"name":"Ivory Search","slug":"add-search-to-menu","current":"5.5.16","new":"5.5.18","active":true,"kind":"plugin"},{"name":"Max Mega Menu","slug":"megamenu","current":"3.10.6","new":"3.10.7","active":true,"kind":"plugin"},{"name":"Pods - Custom Content Types and Fields","slug":"pods","current":"3.3.9.1","new":"3.3.9.2","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress Pods plugin 3.3-3.3.9.1 - Unauthenticated Privilege Escalation vulnerability","cvss":9.8,"count":3}},{"name":"Post Types Order","slug":"post-types-order","current":"2.4.8","new":"2.5.1","active":true,"kind":"plugin"},{"name":"Redirection","slug":"redirection","current":"5.9.0","new":"5.10.0","active":true,"kind":"plugin"},{"name":"Simple Custom CSS and JS","slug":"custom-css-js","current":"3.53","new":"3.54","active":true,"kind":"plugin"},{"name":"TablePress","slug":"tablepress","current":"3.3.3","new":"3.3.4","active":true,"kind":"plugin"},{"name":"WP Data Access","slug":"wp-data-access","current":"5.5.80","new":"5.5.82","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress WP Data Access plugin <= 5.5.81 - SQL Injection vulnerability","cvss":9.3,"count":2}},{"name":"WP Rocket","slug":"wp-rocket","current":"3.23.1.1","new":"3.23.3.3","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress WP Rocket plugin 3.23.1-3.23.3.2 - Unauthenticated Sensitive Data Exposure vulnerability","cvss":7.5,"count":1}},{"name":"WP Umbrella","slug":"wp-health","current":"2.27.0","new":"2.27.2","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.2","new":"28.4","active":true,"kind":"plugin"},{"name":"Duplicate Page and Post","slug":"","current":"2.9.5","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Duplicate Page and Post plugin <= 2.9.5 - Authenticated (Contributor+) SQL Injection via meta_key Parameter vulnerability","cvss":8.5,"count":2}},{"name":"Contact Form 7 Campaign Monitor Extension","slug":"","current":"0.4.67","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Contact Form 7 Campaign Monitor Extension plugin <= 0.4.67 - Arbitrary File Deletion vulnerability","cvss":5.3,"count":1}},{"name":"WPMU DEV Dashboard","slug":"","current":"5.0.0","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress WPMU DEV Dashboard plugin <= 5.0.1 - Authentication Bypass to Administrator via SSO HMAC Canonicalization Confusion vulnerability","cvss":9.8,"count":2}}],"themes":[{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false},{"name":"Divi","slug":"Divi","current":"4.27.7","latest":"4.27.8","active":false},{"name":"Divi Child","slug":"divi-child","current":"1.0.0","latest":"1.0.0","active":true}]},{"name":"CSR Hebel","url":"hebel.com.au","status":"up","label":"","core":{"current":"7.1","latest":"7.1"},"plugins":[{"name":"Agile Store Locator","slug":"agile-store-locator","current":"5.3.2","new":"5.4.6","active":true,"kind":"plugin"},{"name":"Country State City Dropdown CF7","slug":"country-state-city-auto-dropdown","current":"2.8.1","new":"2.8.2","active":true,"kind":"plugin"},{"name":"Divi MadMenu","slug":"divi-mad-menu","current":"2.2.4","new":"2.5.0","active":true,"kind":"plugin"},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"2.0.1","new":"2.0.2","active":true,"kind":"plugin"},{"name":"Kadence Security Basic","slug":"better-wp-security","current":"10.0.3","new":"10.0.4","active":true,"kind":"plugin"},{"name":"Smush Pro","slug":"wpmudev_install-912164","current":"4.3.2","new":"4.3.3","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.4","new":"28.5","active":true,"kind":"plugin"},{"name":"Contact Form 7 Campaign Monitor Extension","slug":"","current":"0.4.67","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Contact Form 7 Campaign Monitor Extension plugin <= 0.4.67 - Arbitrary File Deletion vulnerability","cvss":5.3,"count":1}}],"themes":[{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false},{"name":"Divi","slug":"Divi","current":"4.27.8","latest":"4.27.8","active":false},{"name":"Divi Child","slug":"divi-child","current":"1.0.0","latest":"1.0.0","active":true}]},{"name":"CSR Hebel","url":"hebel.co.nz","status":"up","label":"","core":{"current":"7.1","latest":"7.1"},"plugins":[{"name":"Admin Columns","slug":"codepress-admin-columns","current":"7.0.19","new":"7.1.4","active":false,"kind":"plugin"},{"name":"All-in-One WP Migration and Backup","slug":"all-in-one-wp-migration","current":"7.110","new":"7.111","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress All-in-One WP Migration and Backup plugin <= 7.110 - Unauthenticated Insufficient Credential Protection vulnerability","cvss":5.3,"count":1}},{"name":"Kadence Security Basic","slug":"better-wp-security","current":"10.0.3","new":"10.0.4","active":true,"kind":"plugin"},{"name":"WPBakery Page Builder","slug":"js_composer","current":"7.5","new":"9.0.1","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress WPBakery plugin <= 7.7 - Authenticated (Author+) Local File Inclusion vulnerability","cvss":6.6,"count":14}},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.4","new":"28.5","active":true,"kind":"plugin"},{"name":"wpMandrill","slug":"","current":"1.33","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress wpMandrill plugin <= 1.33 - Broken Access Control vulnerability","cvss":4.3,"count":1}}],"themes":[{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false},{"name":"Hebel","slug":"hebel","current":"1.1","latest":"1.1","active":true},{"name":"Twentytwentytwo","slug":"twentytwentytwo","current":"2.2","latest":"2.2","active":false}]},{"name":"Dubber","url":"www.dubber.net","status":"up","label":"","core":{"current":"7.0.4","latest":"7.1"},"plugins":[{"name":"Advanced Custom Fields PRO","slug":"advanced-custom-fields-pro","current":"6.8.7","new":"6.8.10","active":true,"kind":"plugin"},{"name":"Country State City Dropdown CF7","slug":"country-state-city-auto-dropdown","current":"2.8.1","new":"2.8.2","active":true,"kind":"plugin"},{"name":"Divi FilterGrid","slug":"dp-divi-filtergrid","current":"4.0.6","new":"4.3.2","active":true,"kind":"plugin"},{"name":"Ivory Search","slug":"add-search-to-menu","current":"5.5.16","new":"5.5.18","active":true,"kind":"plugin"},{"name":"Kadence Security Basic","slug":"better-wp-security","current":"10.0.3","new":"10.0.4","active":false,"kind":"plugin"},{"name":"Search & Filter Pro","slug":"search-filter-pro","current":"2.5.17","new":"2.5.21","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Search Filter Pro plugin < 2.5.18 - Admin+ Stored XSS vulnerability","cvss":5.9,"count":2}},{"name":"Smush","slug":"wp-smushit","current":"4.3.2","new":"4.3.3","active":true,"kind":"plugin"},{"name":"WP Rocket","slug":"wp-rocket","current":"3.23.2.1","new":"3.23.3.3","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress WP Rocket plugin 3.23.1-3.23.3.2 - Unauthenticated Sensitive Data Exposure vulnerability","cvss":7.5,"count":1}},{"name":"WP Umbrella","slug":"wp-health","current":"2.27.1","new":"2.27.3","active":true,"kind":"plugin"},{"name":"WP-PageNavi","slug":"wp-pagenavi","current":"3.0.0","new":"3.0.1","active":true,"kind":"plugin"},{"name":"Wordfence Security","slug":"wordfence","current":"9.0.0","new":"9.0.1","active":false,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.3","new":"28.5","active":true,"kind":"plugin"},{"name":"WPMU DEV Dashboard","slug":"","current":"5.0.0","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress WPMU DEV Dashboard plugin <= 5.0.1 - Authentication Bypass to Administrator via SSO HMAC Canonicalization Confusion vulnerability","cvss":9.8,"count":2}},{"name":"Greenhouse Job Board","slug":"","current":"2.7.3","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Greenhouse Job Board plugin <= 2.7.3 - Cross Site Scripting (XSS) vulnerability","cvss":5.9,"count":1}}],"themes":[{"name":"Divi","slug":"Divi","current":"4.27.6","latest":"4.27.8","active":false},{"name":"Divi Child","slug":"divi-child","current":"1.0.0","latest":"1.0.0","active":true},{"name":"Twentytwentythree","slug":"twentytwentythree","current":"1.6","latest":"1.7","active":false}]},{"name":"Dubber","url":"ddtteststg.wpengine.com","status":"up","label":"","core":{"current":"7.0.4","latest":"7.1"},"plugins":[{"name":"Advanced Custom Fields PRO","slug":"advanced-custom-fields-pro","current":"6.8.7","new":"6.8.10","active":true,"kind":"plugin"},{"name":"Country State City Dropdown CF7","slug":"country-state-city-auto-dropdown","current":"2.8.1","new":"2.8.2","active":true,"kind":"plugin"},{"name":"Divi FilterGrid","slug":"dp-divi-filtergrid","current":"4.0.6","new":"4.3.2","active":true,"kind":"plugin"},{"name":"Ivory Search","slug":"add-search-to-menu","current":"5.5.16","new":"5.5.18","active":true,"kind":"plugin"},{"name":"Kadence Security Basic","slug":"better-wp-security","current":"10.0.3","new":"10.0.4","active":false,"kind":"plugin"},{"name":"Redirection","slug":"redirection","current":"5.9.0","new":"5.10.0","active":true,"kind":"plugin"},{"name":"Search & Filter Pro","slug":"search-filter-pro","current":"2.5.17","new":"2.5.21","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Search Filter Pro plugin < 2.5.18 - Admin+ Stored XSS vulnerability","cvss":5.9,"count":2}},{"name":"Smush","slug":"wp-smushit","current":"4.3.0","new":"4.3.3","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress Smush plugin < 4.3.2 - Admin+ Network-Wide RCE vulnerability","cvss":9.1,"count":1}},{"name":"WP Rocket","slug":"wp-rocket","current":"3.23.2.1","new":"3.23.3.3","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress WP Rocket plugin 3.23.1-3.23.3.2 - Unauthenticated Sensitive Data Exposure vulnerability","cvss":7.5,"count":1}},{"name":"WP Umbrella","slug":"wp-health","current":"2.27.1","new":"2.27.3","active":true,"kind":"plugin"},{"name":"WP-PageNavi","slug":"wp-pagenavi","current":"3.0.0","new":"3.0.1","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.3","new":"28.5","active":true,"kind":"plugin"},{"name":"Greenhouse Job Board","slug":"","current":"2.7.3","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Greenhouse Job Board plugin <= 2.7.3 - Cross Site Scripting (XSS) vulnerability","cvss":5.9,"count":1}},{"name":"WPMU DEV Dashboard","slug":"","current":"5.0.0","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress WPMU DEV Dashboard plugin <= 5.0.1 - Authentication Bypass to Administrator via SSO HMAC Canonicalization Confusion vulnerability","cvss":9.8,"count":2}}],"themes":[{"name":"Divi Child","slug":"divi-child","current":"1.0.0","latest":"1.0.0","active":true},{"name":"Twentytwentythree","slug":"twentytwentythree","current":"1.6","latest":"1.7","active":false},{"name":"Divi","slug":"Divi","current":"4.27.7","latest":"4.27.8","active":false}]},{"name":"EMVision","url":"emvisionstg1.wpengine.com","status":"up","label":"","core":{"current":"7.0.4","latest":"7.1"},"plugins":[{"name":"All-in-One WP Migration and Backup","slug":"all-in-one-wp-migration","current":"7.110","new":"7.111","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress All-in-One WP Migration and Backup plugin <= 7.110 - Unauthenticated Insufficient Credential Protection vulnerability","cvss":5.3,"count":1}},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"2.0.1","new":"2.0.2","active":true,"kind":"plugin"},{"name":"Kadence Security Basic","slug":"better-wp-security","current":"10.0.3","new":"10.0.4","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.4","new":"28.5","active":true,"kind":"plugin"}],"themes":[{"name":"Astra Child","slug":"astra-child","current":"1.0.0","latest":"1.0.0","active":true},{"name":"Astra","slug":"astra","current":"4.13.10","latest":"4.13.11","active":false},{"name":"Emvision01","slug":"emvision01","current":"1.0","latest":"1.0","active":false},{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false},{"name":"Twentytwentyfour","slug":"twentytwentyfour","current":"1.6","latest":"1.6","active":false}]},{"name":"EMVision","url":"emvision.com.au","status":"up","label":"","core":{"current":"7.1","latest":"7.1"},"plugins":[{"name":"All-in-One WP Migration and Backup","slug":"all-in-one-wp-migration","current":"7.110","new":"7.111","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress All-in-One WP Migration and Backup plugin <= 7.110 - Unauthenticated Insufficient Credential Protection vulnerability","cvss":5.3,"count":1}},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"2.0.1","new":"2.0.2","active":true,"kind":"plugin"},{"name":"Kadence Security Basic","slug":"better-wp-security","current":"10.0.3","new":"10.0.4","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.4","new":"28.5","active":true,"kind":"plugin"}],"themes":[{"name":"Astra Child","slug":"astra-child","current":"1.0.0","latest":"1.0.0","active":true},{"name":"Astra","slug":"astra","current":"4.13.10","latest":"4.13.11","active":false},{"name":"Emvision01","slug":"emvision01","current":"1.0","latest":"1.0","active":false},{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false},{"name":"Twentytwentyfour","slug":"twentytwentyfour","current":"1.6","latest":"1.6","active":false}]},{"name":"Federation Asset Management","url":"federationam.com","status":"up","label":"","core":{"current":"7.0.4","latest":"7.1"},"plugins":[{"name":"Advanced Custom Fields PRO","slug":"advanced-custom-fields-pro","current":"6.8.6","new":"6.8.10","active":true,"kind":"plugin"},{"name":"Contact Form 7","slug":"contact-form-7","current":"6.1.6","new":"6.1.7","active":true,"kind":"plugin"},{"name":"Contact Form CFDB7","slug":"contact-form-cfdb7","current":"1.3.6","new":"1.4.0","active":true,"kind":"plugin"},{"name":"Disable Comments","slug":"disable-comments","current":"2.8.0","new":"2.9.0","active":true,"kind":"plugin"},{"name":"Divi FilterGrid","slug":"dp-divi-filtergrid","current":"4.3","new":"4.3.2","active":true,"kind":"plugin"},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"1.22.4","new":"2.0.2","active":true,"kind":"plugin"},{"name":"Kadence Security Basic","slug":"better-wp-security","current":"10.0.3","new":"10.0.4","active":true,"kind":"plugin"},{"name":"Max Mega Menu","slug":"megamenu","current":"3.10.6","new":"3.10.8","active":true,"kind":"plugin"},{"name":"Post Types Order","slug":"post-types-order","current":"2.4.8","new":"2.5.3","active":true,"kind":"plugin"},{"name":"Redirection","slug":"redirection","current":"5.9.0","new":"5.10.0","active":true,"kind":"plugin"},{"name":"SMTP2GO - Email Made Easy","slug":"smtp2go","current":"1.17.0","new":"1.17.1","active":true,"kind":"plugin"},{"name":"WP Umbrella","slug":"wp-health","current":"2.27.1","new":"2.27.3","active":true,"kind":"plugin"},{"name":"WPS Hide Login","slug":"wps-hide-login","current":"1.9.18","new":"1.9.19","active":true,"kind":"plugin"},{"name":"Wordfence Security","slug":"wordfence","current":"9.0.0","new":"9.0.1","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.1","new":"28.5","active":true,"kind":"plugin"},{"name":"WP Rocket","slug":"","current":"3.12.5.3","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress WP Rocket plugin <= 3.21.0.1 - Unauthenticated Stored Cross-Site Scripting via Picture Source Attributes in rocket_beacon Endpoint vulnerability","cvss":7.1,"count":2}}],"themes":[{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false},{"name":"Twentytwentythree","slug":"twentytwentythree","current":"1.6","latest":"1.7","active":false},{"name":"Divi Child","slug":"Divi-child","current":"1.0.0","latest":"1.0.0","active":true},{"name":"Divi","slug":"Divi","current":"4.27.7","latest":"4.27.7","active":false}]},{"name":"Federation Asset Management","url":"federatnammstg.wpengine.com","status":"up","label":"","core":{"current":"7.0.4","latest":"7.1"},"plugins":[{"name":"Advanced Custom Fields PRO","slug":"advanced-custom-fields-pro","current":"6.8.6","new":"6.8.10","active":true,"kind":"plugin"},{"name":"Contact Form 7","slug":"contact-form-7","current":"6.1.6","new":"6.1.7","active":true,"kind":"plugin"},{"name":"Contact Form CFDB7","slug":"contact-form-cfdb7","current":"1.3.6","new":"1.4.0","active":true,"kind":"plugin"},{"name":"Divi FilterGrid","slug":"dp-divi-filtergrid","current":"4.3","new":"4.3.2","active":true,"kind":"plugin"},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"1.22.4","new":"2.0.2","active":true,"kind":"plugin"},{"name":"Kadence Security Basic","slug":"better-wp-security","current":"10.0.3","new":"10.0.4","active":true,"kind":"plugin"},{"name":"Max Mega Menu","slug":"megamenu","current":"3.10.6","new":"3.10.8","active":true,"kind":"plugin"},{"name":"Post Types Order","slug":"post-types-order","current":"2.4.8","new":"2.5.3","active":true,"kind":"plugin"},{"name":"Redirection","slug":"redirection","current":"5.9.0","new":"5.10.0","active":true,"kind":"plugin"},{"name":"SMTP2GO - Email Made Easy","slug":"smtp2go","current":"1.17.0","new":"1.17.1","active":true,"kind":"plugin"},{"name":"WP Umbrella","slug":"wp-health","current":"2.26.0","new":"2.27.3","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress WP Umbrella plugin 2.24.2-2.26.2 - Cross Site Request Forgery (CSRF) vulnerability","cvss":5.4,"count":1}},{"name":"WPS Hide Login","slug":"wps-hide-login","current":"1.9.18","new":"1.9.19","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.1","new":"28.5","active":true,"kind":"plugin"},{"name":"WP Rocket","slug":"","current":"3.12.5.3","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress WP Rocket plugin <= 3.21.0.1 - Unauthenticated Stored Cross-Site Scripting via Picture Source Attributes in rocket_beacon Endpoint vulnerability","cvss":7.1,"count":2}}],"themes":[{"name":"Twentytwentythree","slug":"twentytwentythree","current":"1.6","latest":"1.7","active":false},{"name":"Divi Child","slug":"Divi-child","current":"1.0.0","latest":"1.0.0","active":true},{"name":"Divi","slug":"Divi","current":"4.27.7","latest":"4.27.8","active":false},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false}]},{"name":"FloatX","url":"floatx.com","status":"up","label":"","core":{"current":"7.1","latest":"7.1"},"plugins":[{"name":"All-in-One WP Migration and Backup","slug":"all-in-one-wp-migration","current":"7.110","new":"7.111","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress All-in-One WP Migration and Backup plugin <= 7.110 - Unauthenticated Insufficient Credential Protection vulnerability","cvss":5.3,"count":1}},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"2.0.1","new":"2.0.2","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.4","new":"28.5","active":true,"kind":"plugin"},{"name":"WPMU DEV Dashboard","slug":"","current":"5.0.0","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress WPMU DEV Dashboard plugin <= 5.0.1 - Authentication Bypass to Administrator via SSO HMAC Canonicalization Confusion vulnerability","cvss":9.8,"count":2}}],"themes":[{"name":"Twentytwentythree","slug":"twentytwentythree","current":"1.7","latest":"1.7","active":false},{"name":"Twentytwentytwo","slug":"twentytwentytwo","current":"2.2","latest":"2.2","active":false},{"name":"Divi Child","slug":"Divi-Child","current":"1.0","latest":"1.0","active":true},{"name":"Divi","slug":"Divi","current":"4.27.7","latest":"4.27.7","active":false},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false},{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false},{"name":"Twentytwentyfour","slug":"twentytwentyfour","current":"1.6","latest":"1.6","active":false},{"name":"Twentytwentyone","slug":"twentytwentyone","current":"2.9","latest":"2.9","active":false}]},{"name":"FloatX","url":"floatxdev.wpenginepowered.com","status":"up","label":"","core":{"current":"7.1","latest":"7.1"},"plugins":[{"name":"All-in-One WP Migration and Backup","slug":"all-in-one-wp-migration","current":"7.110","new":"7.111","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress All-in-One WP Migration and Backup plugin <= 7.110 - Unauthenticated Insufficient Credential Protection vulnerability","cvss":5.3,"count":1}},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"2.0.1","new":"2.0.2","active":true,"kind":"plugin"},{"name":"Kadence Security Basic","slug":"better-wp-security","current":"10.0.3","new":"10.0.4","active":true,"kind":"plugin"},{"name":"Smush Pro","slug":"wpmudev_install-912164","current":"4.3.2","new":"4.3.3","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.4","new":"28.5","active":true,"kind":"plugin"},{"name":"WPML Multilingual CMS","slug":"","current":"4.6.14","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress WPML Multilingual CMS plugin <= 4.9.5 - Incorrect Authorization to Authenticated (Subscriber+) SQL Injection vulnerability","cvss":8.5,"count":3}}],"themes":[{"name":"Divi Child","slug":"Divi-Child","current":"1.0","latest":"1.0","active":true},{"name":"Divi","slug":"Divi","current":"4.27.8","latest":"4.27.8","active":false},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false},{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false},{"name":"Twentytwentyfour","slug":"twentytwentyfour","current":"1.6","latest":"1.6","active":false},{"name":"Twentytwentyone","slug":"twentytwentyone","current":"2.9","latest":"2.9","active":false},{"name":"Twentytwentythree","slug":"twentytwentythree","current":"1.7","latest":"1.7","active":false},{"name":"Twentytwentytwo","slug":"twentytwentytwo","current":"2.2","latest":"2.2","active":false}]},{"name":"Harvest Hospitality","url":"harvesthospitality.com.au","status":"up","label":"","core":{"current":"7.1","latest":"7.1"},"plugins":[{"name":"Agile Store Locator","slug":"agile-store-locator","current":"4.11.13","new":"5.4.6","active":true,"kind":"plugin"},{"name":"All-in-One WP Migration and Backup","slug":"all-in-one-wp-migration","current":"7.110","new":"7.111","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress All-in-One WP Migration and Backup plugin <= 7.110 - Unauthenticated Insufficient Credential Protection vulnerability","cvss":5.3,"count":1}},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"2.0.1","new":"2.0.2","active":true,"kind":"plugin"},{"name":"Kadence Security Basic","slug":"better-wp-security","current":"10.0.3","new":"10.0.4","active":true,"kind":"plugin"},{"name":"Simple History","slug":"simple-history","current":"5.32.0","new":"5.33.0","active":true,"kind":"plugin"},{"name":"WP Engine Site Migration","slug":"wpe-site-migration","current":"1.8.4","new":"1.8.5","active":true,"kind":"plugin"},{"name":"WPIDE - File Manager & Code Editor","slug":"wpide","current":"3.5.8","new":"3.5.9","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.4","new":"28.5","active":true,"kind":"plugin"}],"themes":[{"name":"Twentytwentyfour","slug":"twentytwentyfour","current":"1.6","latest":"1.6","active":false},{"name":"Twentytwentythree","slug":"twentytwentythree","current":"1.7","latest":"1.7","active":false},{"name":"Divi","slug":"Divi","current":"4.27.7","latest":"4.27.8","active":false},{"name":"Divi Child","slug":"divi-child","current":"1.0.0","latest":"1.0.0","active":true},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false},{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false}]},{"name":"Harvest Hospitality","url":"staging.harvesthospitality.com.au","status":"down","label":"","core":{"current":"7.0.1","latest":"7.1"},"plugins":[{"name":"Redirection","slug":"redirection","current":"5.8.1","new":"5.9.0","active":true,"kind":"plugin"},{"name":"SVG Support","slug":"","current":"2.5.16","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress SVG Support plugin < 2.5.17 - Author+ Stored XSS via .svgz Sanitization Bypass vulnerability","cvss":5.9,"count":1}},{"name":"Activity Log","slug":"","current":"2.11.2","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Activity Log plugin <= 2.13.1 - Cross Site Request Forgery (CSRF) vulnerability","cvss":7.1,"count":1}},{"name":"Yoast SEO","slug":"","current":"28.0","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Yoast SEO – Advanced SEO with real-time guidance and built-in AI plugin <= 28.0 - Authenticated (Author+) Stored Cross-Site Scripting vulnerability","cvss":6.5,"count":1}},{"name":"Copy & Delete Posts","slug":"","current":"1.5.4","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Copy & Delete Posts plugin < 1.5.5 - Authenticated Arbitrary Post Deletion via Missing Object-Level Authorization vulnerability","cvss":5.5,"count":3}},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"","current":"1.22.3","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress GTM4WP – A Google Tag Manager (GTM) plugin for WordPress plugin <= 1.22.3 - Unauthenticated Stored Cross-Site Scripting vulnerability","cvss":7.1,"count":1}},{"name":"WPIDE - File Manager & Code Editor","slug":"","current":"3.5.6","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress WPIDE – File Manager & Code Editor plugin <= 3.5.6 - Cross Site Request Forgery (CSRF) vulnerability","cvss":8.8,"count":2}},{"name":"FluentSMTP","slug":"","current":"2.2.95","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress FluentSMTP plugin <= 2.2.95 - Unauthenticated Stored Cross-Site Scripting vulnerability","cvss":7.1,"count":1}},{"name":"Migrate Guru – Site Migration & Cloning","slug":"","current":"6.28","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Migrate Guru – Site Migration & Cloning plugin <= 6.65 - Denial of Service Attack vulnerability","cvss":7.5,"count":1}},{"name":"Pods - Custom Content Types and Fields","slug":"","current":"3.3.9","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress Pods plugin <= 3.3.9 - Unauthenticated Privilege Escalation vulnerability","cvss":9.8,"count":5}},{"name":"WP Umbrella","slug":"","current":"2.25.0","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress WP Umbrella plugin 2.24.2-2.26.2 - Cross Site Request Forgery (CSRF) vulnerability","cvss":5.4,"count":1}},{"name":"All-in-One WP Migration and Backup","slug":"","current":"7.106","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress All-in-One WP Migration and Backup plugin <= 7.109 - Unauthenticated Second-Order SQL Injection via Archive Restore to Remote Code Execution vulnerability","cvss":8.8,"count":3}}],"themes":[{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false},{"name":"Divi Child","slug":"divi-child","current":"1.0.0","latest":"1.0.0","active":true},{"name":"Twentytwentythree","slug":"twentytwentythree","current":"1.6","latest":"1.6","active":false},{"name":"Twentytwentyfour","slug":"twentytwentyfour","current":"1.5","latest":"1.5","active":false},{"name":"Divi","slug":"Divi","current":"4.27.5","latest":"4.27.7","active":false},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false}]},{"name":"In Marketing We Trust","url":"imwtstaging.wpengine.com","status":"up","label":"","core":{"current":"7.1","latest":"7.1"},"plugins":[{"name":"Advanced Custom Fields PRO","slug":"advanced-custom-fields-pro","current":"6.8.9","new":"6.8.10","active":true,"kind":"plugin"},{"name":"All-in-One WP Migration and Backup","slug":"all-in-one-wp-migration","current":"7.110","new":"7.111","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress All-in-One WP Migration and Backup plugin <= 7.110 - Unauthenticated Insufficient Credential Protection vulnerability","cvss":5.3,"count":1}},{"name":"Divi FilterGrid","slug":"dp-divi-filtergrid","current":"4.3.1","new":"4.3.2","active":true,"kind":"plugin"},{"name":"Divi Mega Pro","slug":"divi-mega-pro","current":"1.9.8.2","new":"1.9.9.9","active":true,"kind":"plugin"},{"name":"Kadence Security Basic","slug":"better-wp-security","current":"10.0.3","new":"10.0.4","active":true,"kind":"plugin"},{"name":"Post Types Order","slug":"post-types-order","current":"2.5.1","new":"2.5.3","active":true,"kind":"plugin"},{"name":"WPIDE - File Manager & Code Editor","slug":"wpide","current":"3.5.8","new":"3.5.9","active":false,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.4","new":"28.5","active":true,"kind":"plugin"}],"themes":[{"name":"Twentytwentyfour","slug":"twentytwentyfour","current":"1.6","latest":"1.6","active":false},{"name":"Twentytwentyone","slug":"twentytwentyone","current":"2.9","latest":"2.9","active":false},{"name":"Divi Child","slug":"Divi Child","current":"2.0.0","latest":"2.0.0","active":true},{"name":"Divi","slug":"Divi","current":"4.27.8","latest":"4.27.8","active":false},{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false}]},{"name":"In Marketing We Trust","url":"inmarketingwetrust.com.au","status":"up","label":"","core":{"current":"7.1","latest":"7.1"},"plugins":[{"name":"All-in-One WP Migration and Backup","slug":"all-in-one-wp-migration","current":"7.110","new":"7.111","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress All-in-One WP Migration and Backup plugin <= 7.110 - Unauthenticated Insufficient Credential Protection vulnerability","cvss":5.3,"count":1}},{"name":"Divi FilterGrid","slug":"dp-divi-filtergrid","current":"4.3.1","new":"4.3.2","active":true,"kind":"plugin"},{"name":"Divi Mega Pro","slug":"divi-mega-pro","current":"1.9.8.2","new":"1.9.9.9","active":true,"kind":"plugin"},{"name":"Post Types Order","slug":"post-types-order","current":"2.5.1","new":"2.5.3","active":true,"kind":"plugin"},{"name":"WPIDE - File Manager & Code Editor","slug":"wpide","current":"3.5.8","new":"3.5.9","active":false,"kind":"plugin"},{"name":"Wordfence Security","slug":"wordfence","current":"9.0.0","new":"9.0.1","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.4","new":"28.5","active":true,"kind":"plugin"}],"themes":[{"name":"Twentytwentyfour","slug":"twentytwentyfour","current":"1.6","latest":"1.6","active":false},{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false},{"name":"Twentytwentyone","slug":"twentytwentyone","current":"2.9","latest":"2.9","active":false},{"name":"Divi Child","slug":"Divi Child","current":"2.0.0","latest":"2.0.0","active":true},{"name":"Divi","slug":"Divi","current":"4.27.8","latest":"4.27.8","active":false}]},{"name":"Monier","url":"uat.monier.com.au","status":"disc","label":"","core":{"current":"7.0.4","latest":"7.1"},"plugins":[{"name":"Activity Log","slug":"aryo-activity-log","current":"2.11.2","new":"2.14.1","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Activity Log plugin <= 2.13.1 - Cross Site Request Forgery (CSRF) vulnerability","cvss":7.1,"count":1}},{"name":"Advanced Custom Fields PRO","slug":"advanced-custom-fields-pro","current":"6.8.7","new":"6.8.9","active":true,"kind":"plugin"},{"name":"Category Order and Taxonomy Terms Order","slug":"taxonomy-terms-order","current":"1.9.9.1","new":"2.0","active":true,"kind":"plugin"},{"name":"Contact Form 7","slug":"contact-form-7","current":"6.1.6","new":"6.1.7","active":true,"kind":"plugin"},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"1.22.5","new":"2.0.0","active":true,"kind":"plugin"},{"name":"Genesis Blocks","slug":"genesis-blocks","current":"3.1.10","new":"3.1.11","active":true,"kind":"plugin"},{"name":"Max Mega Menu","slug":"megamenu","current":"3.10.6","new":"3.10.7","active":true,"kind":"plugin"},{"name":"Migrate Guru – Site Migration & Cloning","slug":"migrate-guru","current":"6.28","new":"6.72","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Migrate Guru – Site Migration & Cloning plugin <= 6.65 - Denial of Service Attack vulnerability","cvss":7.5,"count":1}},{"name":"Pods - Custom Content Types and Fields","slug":"pods","current":"3.3.9.1","new":"3.3.9.2","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress Pods plugin 3.3-3.3.9.1 - Unauthenticated Privilege Escalation vulnerability","cvss":9.8,"count":3}},{"name":"Post Types Order","slug":"post-types-order","current":"2.4.8","new":"2.5.1","active":true,"kind":"plugin"},{"name":"Redirection","slug":"redirection","current":"5.9.0","new":"5.10.0","active":true,"kind":"plugin"},{"name":"Simple Custom CSS and JS","slug":"custom-css-js","current":"3.53","new":"3.54","active":true,"kind":"plugin"},{"name":"WP Data Access","slug":"wp-data-access","current":"5.5.80","new":"5.5.82","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress WP Data Access plugin <= 5.5.81 - SQL Injection vulnerability","cvss":9.3,"count":2}},{"name":"WP Rocket","slug":"wp-rocket","current":"3.23.1.1","new":"3.23.3.3","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress WP Rocket plugin 3.23.1-3.23.3.2 - Unauthenticated Sensitive Data Exposure vulnerability","cvss":7.5,"count":1}},{"name":"WP Umbrella","slug":"wp-health","current":"2.27.0","new":"2.27.2","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.2","new":"28.4","active":true,"kind":"plugin"}],"themes":[{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false},{"name":"Divi","slug":"Divi","current":"4.27.7","latest":"4.27.8","active":false},{"name":"Divi Child","slug":"divi-child","current":"1.0.0","latest":"1.0.0","active":true}]},{"name":"Monier","url":"www.monier.com.au","status":"up","label":"","core":{"current":"7.1","latest":"7.1"},"plugins":[{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"2.0.1","new":"2.0.2","active":true,"kind":"plugin"},{"name":"Kadence Security Basic","slug":"better-wp-security","current":"10.0.3","new":"10.0.4","active":true,"kind":"plugin"},{"name":"Smush Pro","slug":"wpmudev_install-912164","current":"4.3.2","new":"4.3.3","active":true,"kind":"plugin"},{"name":"WP Data Access","slug":"wp-data-access","current":"5.5.80","new":"5.5.84","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress WP Data Access plugin <= 5.5.81 - SQL Injection vulnerability","cvss":9.3,"count":2}},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.4","new":"28.5","active":true,"kind":"plugin"}],"themes":[{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false},{"name":"Divi","slug":"Divi","current":"4.27.7","latest":"4.27.8","active":false},{"name":"Divi Child","slug":"divi-child","current":"1.0.0","latest":"1.0.0","active":true}]},{"name":"Monier","url":"www.monier.co.nz","status":"up","label":"","core":{"current":"7.1","latest":"7.1"},"plugins":[{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"2.0.1","new":"2.0.2","active":true,"kind":"plugin"},{"name":"Kadence Security Basic","slug":"better-wp-security","current":"10.0.3","new":"10.0.4","active":true,"kind":"plugin"},{"name":"Smush Pro","slug":"wpmudev_install-912164","current":"4.3.2","new":"4.3.3","active":true,"kind":"plugin"},{"name":"WP Data Access","slug":"wp-data-access","current":"5.5.80","new":"5.5.84","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress WP Data Access plugin <= 5.5.81 - SQL Injection vulnerability","cvss":9.3,"count":2}},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.4","new":"28.5","active":true,"kind":"plugin"}],"themes":[{"name":"Divi","slug":"Divi","current":"4.27.8","latest":"4.27.8","active":false},{"name":"Divi Child","slug":"divi-child","current":"1.0.0","latest":"1.0.0","active":true},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false},{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false}]},{"name":"Monier","url":"dev.monier.co.nz","status":"up","label":"","core":{"current":"7.0.4","latest":"7.1"},"plugins":[{"name":"Activity Log","slug":"aryo-activity-log","current":"2.11.2","new":"2.15.0","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Activity Log plugin <= 2.13.1 - Cross Site Request Forgery (CSRF) vulnerability","cvss":7.1,"count":1}},{"name":"Advanced Custom Fields PRO","slug":"advanced-custom-fields-pro","current":"6.8.7","new":"6.8.10","active":true,"kind":"plugin"},{"name":"Agile Store Locator","slug":"agile-store-locator","current":"5.3.0","new":"5.4.6","active":true,"kind":"plugin"},{"name":"Category Order and Taxonomy Terms Order","slug":"taxonomy-terms-order","current":"1.9.9.1","new":"2.0","active":true,"kind":"plugin"},{"name":"Contact Form 7","slug":"contact-form-7","current":"6.1.6","new":"6.1.7","active":true,"kind":"plugin"},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"1.22.5","new":"2.0.2","active":true,"kind":"plugin"},{"name":"Genesis Blocks","slug":"genesis-blocks","current":"3.1.10","new":"3.1.11","active":true,"kind":"plugin"},{"name":"Kadence Security Basic","slug":"better-wp-security","current":"10.0.3","new":"10.0.4","active":true,"kind":"plugin"},{"name":"Max Mega Menu","slug":"megamenu","current":"3.10.6","new":"3.10.8","active":true,"kind":"plugin"},{"name":"Migrate Guru – Site Migration & Cloning","slug":"migrate-guru","current":"6.28","new":"6.72","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Migrate Guru – Site Migration & Cloning plugin <= 6.65 - Denial of Service Attack vulnerability","cvss":7.5,"count":1}},{"name":"Pods - Custom Content Types and Fields","slug":"pods","current":"3.3.9.1","new":"3.3.9.2","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress Pods plugin 3.3-3.3.9.1 - Unauthenticated Privilege Escalation vulnerability","cvss":9.8,"count":3}},{"name":"Post Types Order","slug":"post-types-order","current":"2.4.8","new":"2.5.3","active":true,"kind":"plugin"},{"name":"Redirection","slug":"redirection","current":"5.9.0","new":"5.10.0","active":true,"kind":"plugin"},{"name":"Simple Custom CSS and JS","slug":"custom-css-js","current":"3.53","new":"3.54","active":true,"kind":"plugin"},{"name":"WP Data Access","slug":"wp-data-access","current":"5.5.80","new":"5.5.84","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress WP Data Access plugin <= 5.5.81 - SQL Injection vulnerability","cvss":9.3,"count":2}},{"name":"WP Rocket","slug":"wp-rocket","current":"3.23.1.1","new":"3.23.3.3","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress WP Rocket plugin 3.23.1-3.23.3.2 - Unauthenticated Sensitive Data Exposure vulnerability","cvss":7.5,"count":1}},{"name":"WP Umbrella","slug":"wp-health","current":"2.26.2","new":"2.27.3","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress WP Umbrella plugin 2.24.2-2.26.2 - Cross Site Request Forgery (CSRF) vulnerability","cvss":5.4,"count":1}},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.2","new":"28.5","active":true,"kind":"plugin"}],"themes":[{"name":"Divi Child","slug":"divi-child","current":"1.0.0","latest":"1.0.0","active":true},{"name":"Divi","slug":"Divi","current":"4.27.7","latest":"4.27.8","active":false},{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false}]},{"name":"PowerPattern™ Facade Visualiser","url":"visualiser.hebel.com.au","status":"up","label":"","core":{"current":"7.0.4","latest":"7.1"},"plugins":[{"name":"Activity Log","slug":"aryo-activity-log","current":"2.11.2","new":"2.15.0","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Activity Log plugin <= 2.13.1 - Cross Site Request Forgery (CSRF) vulnerability","cvss":7.1,"count":1}},{"name":"Advanced Custom Fields PRO","slug":"advanced-custom-fields-pro","current":"6.8.7","new":"6.8.10","active":true,"kind":"plugin"},{"name":"Contact Form 7","slug":"contact-form-7","current":"6.1.6","new":"6.1.7","active":true,"kind":"plugin"},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"1.22.5","new":"2.0.2","active":true,"kind":"plugin"},{"name":"Genesis Blocks","slug":"genesis-blocks","current":"3.1.10","new":"3.1.11","active":false,"kind":"plugin"},{"name":"Kadence Security Basic","slug":"better-wp-security","current":"10.0.3","new":"10.0.4","active":true,"kind":"plugin"},{"name":"WP Rocket","slug":"wp-rocket","current":"3.23.1.1","new":"3.23.3.3","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress WP Rocket plugin 3.23.1-3.23.3.2 - Unauthenticated Sensitive Data Exposure vulnerability","cvss":7.5,"count":1}},{"name":"WP Umbrella","slug":"wp-health","current":"2.27.0","new":"2.27.3","active":true,"kind":"plugin"},{"name":"Wordfence Security","slug":"wordfence","current":"9.0.0","new":"9.0.1","active":true,"kind":"plugin"},{"name":"Contact Form 7 Campaign Monitor Extension","slug":"","current":"0.4.67","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Contact Form 7 Campaign Monitor Extension plugin <= 0.4.67 - Arbitrary File Deletion vulnerability","cvss":5.3,"count":1}},{"name":"Ninja Forms - File Uploads","slug":"","current":"3.0.20","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress Ninja Forms - File Upload plugin <= 3.3.26 - Unauthenticated Arbitrary File Upload vulnerability","cvss":10,"count":9}},{"name":"Ninja Forms - Layout & Styles","slug":"","current":"3.0.25","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Ninja Forms - Layout & Styles plugin <= 3.0.31 - PHP Object Injection vulnerability","cvss":8.8,"count":1}}],"themes":[{"name":"Twentytwentyone","slug":"twentytwentyone","current":"2.8","latest":"2.9","active":false},{"name":"Twentytwentytwo","slug":"twentytwentytwo","current":"2.1","latest":"2.2","active":false},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false},{"name":"Hebel Visualiser","slug":"hebel-visualiser","current":"","latest":"","active":true},{"name":"Twentynineteen","slug":"twentynineteen","current":"3.3","latest":"3.4","active":false},{"name":"Twentytwenty","slug":"twentytwenty","current":"3.1","latest":"3.2","active":false}]},{"name":"Smart Permanent Formwork","url":"afsformwork.wpengine.com","status":"down","label":"","core":{"current":"7.0.1","latest":"7.1"},"plugins":[{"name":"WP Umbrella","slug":"","current":"2.25.0","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress WP Umbrella plugin 2.24.2-2.26.2 - Cross Site Request Forgery (CSRF) vulnerability","cvss":5.4,"count":1}},{"name":"SVG Support","slug":"","current":"2.5.16","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress SVG Support plugin < 2.5.17 - Author+ Stored XSS via .svgz Sanitization Bypass vulnerability","cvss":5.9,"count":1}},{"name":"WP Activity Log","slug":"","current":"5.6.4","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress WP Activity Log plugin <= 5.6.4 - Cross Site Request Forgery (CSRF) vulnerability","cvss":5.4,"count":1}},{"name":"WP Go Maps (formerly WP Google Maps)","slug":"","current":"10.1.04","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress WP Go Maps plugin <= 10.1.05 - Broken Access Control vulnerability","cvss":5.3,"count":2}},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"","current":"1.22.3","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress GTM4WP – A Google Tag Manager (GTM) plugin for WordPress plugin <= 1.22.3 - Unauthenticated Stored Cross-Site Scripting vulnerability","cvss":7.1,"count":1}},{"name":"Pods - Custom Content Types and Fields","slug":"","current":"3.3.9","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress Pods plugin <= 3.3.9 - Unauthenticated Privilege Escalation vulnerability","cvss":9.8,"count":5}},{"name":"Contact Form 7 Campaign Monitor Extension","slug":"","current":"0.4.67","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Contact Form 7 Campaign Monitor Extension plugin <= 0.4.67 - Arbitrary File Deletion vulnerability","cvss":5.3,"count":1}},{"name":"Advanced CF7 DB","slug":"","current":"2.1.2","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Advanced Contact form 7 DB plugin <= 2.1.3 - Missing Authorization to Authenticated (Custom+) Unauthorized Data Import vulnerability","cvss":4.3,"count":1}},{"name":"WPMU DEV Dashboard","slug":"","current":"5.0.0","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress WPMU DEV Dashboard plugin <= 5.0.1 - Authentication Bypass to Administrator via SSO HMAC Canonicalization Confusion vulnerability","cvss":9.8,"count":2}},{"name":"All-in-One WP Migration and Backup","slug":"","current":"7.106","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress All-in-One WP Migration and Backup plugin <= 7.109 - Unauthenticated Second-Order SQL Injection via Archive Restore to Remote Code Execution vulnerability","cvss":8.8,"count":3}},{"name":"Drag and Drop Multiple File Upload for Contact Form 7","slug":"","current":"1.3.9.8","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Drag and Drop Multiple File Upload for Contact Form 7 plugin < 1.3.9.9 - Unauthenticated RCE via Control Character Filename Bypass vulnerability","cvss":8.1,"count":2}},{"name":"Smart Slider 3","slug":"","current":"3.5.1.38","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Smart Slider 3 plugin <= 3.5.1.38 - Authenticated (Contributor+) Stored Cross-Site Scripting via 'slider' Block Attribute vulnerability","cvss":6.5,"count":1}},{"name":"Yoast SEO","slug":"","current":"28.0","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Yoast SEO – Advanced SEO with real-time guidance and built-in AI plugin <= 28.0 - Authenticated (Author+) Stored Cross-Site Scripting vulnerability","cvss":6.5,"count":1}}],"themes":[{"name":"Twentytwentyfour","slug":"twentytwentyfour","current":"1.5","latest":"1.5","active":false},{"name":"Divi","slug":"Divi","current":"4.27.7","latest":"4.27.7","active":false},{"name":"Divi Child","slug":"Divi-Child","current":"1.0.1","latest":"1.0.1","active":true},{"name":"Twentytwentytwo","slug":"twentytwentytwo","current":"2.1","latest":"2.1","active":false}]},{"name":"Smart Permanent Formwork","url":"afsformwork.com.au","status":"up","label":"","core":{"current":"7.1","latest":"7.1"},"plugins":[{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"2.0.1","new":"2.0.2","active":true,"kind":"plugin"},{"name":"Kadence Security Basic","slug":"better-wp-security","current":"10.0.3","new":"10.0.4","active":true,"kind":"plugin"},{"name":"Smush Pro","slug":"wpmudev_install-912164","current":"4.3.2","new":"4.3.3","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.4","new":"28.5","active":true,"kind":"plugin"},{"name":"Contact Form 7 Campaign Monitor Extension","slug":"","current":"0.4.67","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Contact Form 7 Campaign Monitor Extension plugin <= 0.4.67 - Arbitrary File Deletion vulnerability","cvss":5.3,"count":1}},{"name":"Advanced CF7 DB","slug":"","current":"2.1.3","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Advanced Contact form 7 DB plugin <= 2.1.3 - Missing Authorization to Authenticated (Custom+) Unauthorized Data Import vulnerability","cvss":4.3,"count":1}}],"themes":[{"name":"Divi Child","slug":"Divi-Child","current":"1.0.1","latest":"1.0.1","active":true},{"name":"Divi","slug":"Divi","current":"4.27.8","latest":"4.27.8","active":false},{"name":"Twentytwentyfour","slug":"twentytwentyfour","current":"1.6","latest":"1.6","active":false},{"name":"Twentytwentytwo","slug":"twentytwentytwo","current":"2.2","latest":"2.2","active":false}]},{"name":"Soundstyle™","url":"soundstylestg.wpenginepowered.com","status":"disc","label":"","core":{"current":"7.0.4","latest":"7.1"},"plugins":[{"name":"Activity Log","slug":"aryo-activity-log","current":"2.11.2","new":"2.14.1","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Activity Log plugin <= 2.13.1 - Cross Site Request Forgery (CSRF) vulnerability","cvss":7.1,"count":1}},{"name":"Advanced Custom Fields PRO","slug":"advanced-custom-fields-pro","current":"6.8.7","new":"6.8.9","active":true,"kind":"plugin"},{"name":"Contact Form 7","slug":"contact-form-7","current":"6.1.6","new":"6.1.7","active":true,"kind":"plugin"},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"1.22.5","new":"2.0.0","active":true,"kind":"plugin"},{"name":"Max Mega Menu","slug":"megamenu","current":"3.10.6","new":"3.10.7","active":true,"kind":"plugin"},{"name":"Migrate Guru – Site Migration & Cloning","slug":"migrate-guru","current":"6.28","new":"6.72","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Migrate Guru – Site Migration & Cloning plugin <= 6.65 - Denial of Service Attack vulnerability","cvss":7.5,"count":1}},{"name":"Pods - Custom Content Types and Fields","slug":"pods","current":"3.3.9.1","new":"3.3.9.2","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress Pods plugin 3.3-3.3.9.1 - Unauthenticated Privilege Escalation vulnerability","cvss":9.8,"count":3}},{"name":"Simple Custom CSS and JS","slug":"custom-css-js","current":"3.53","new":"3.54","active":true,"kind":"plugin"},{"name":"WP Go Maps (formerly WP Google Maps)","slug":"wp-google-maps","current":"10.1.06","new":"10.1.09","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress WP Go Maps plugin <= 10.1.08 - Denial of Service Attack vulnerability","cvss":5.3,"count":1}},{"name":"WP Rocket","slug":"wp-rocket","current":"3.23.1.1","new":"3.23.3.3","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress WP Rocket plugin 3.23.1-3.23.3.2 - Unauthenticated Sensitive Data Exposure vulnerability","cvss":7.5,"count":1}},{"name":"WP Umbrella","slug":"wp-health","current":"2.27.0","new":"2.27.2","active":true,"kind":"plugin"},{"name":"WPForms Lite","slug":"wpforms-lite","current":"2.0.0.2","new":"2.0.1.1","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.2","new":"28.4","active":true,"kind":"plugin"},{"name":"Contact Form 7 Campaign Monitor Extension","slug":"","current":"0.4.67","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Contact Form 7 Campaign Monitor Extension plugin <= 0.4.67 - Arbitrary File Deletion vulnerability","cvss":5.3,"count":1}}],"themes":[{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false},{"name":"Divi","slug":"Divi","current":"4.27.5","latest":"4.27.8","active":false},{"name":"Divi Child","slug":"divi-child","current":"1.0.0","latest":"1.0.0","active":true},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false}]},{"name":"Soundstyle™","url":"soundstyle.wovenimage.com","status":"up","label":"","core":{"current":"7.1","latest":"7.1"},"plugins":[{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"2.0.1","new":"2.0.2","active":true,"kind":"plugin"},{"name":"Kadence Security Basic","slug":"better-wp-security","current":"10.0.3","new":"10.0.4","active":true,"kind":"plugin"},{"name":"Smush Pro","slug":"wpmudev_install-912164","current":"4.3.2","new":"4.3.3","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.4","new":"28.5","active":true,"kind":"plugin"},{"name":"Contact Form 7 Campaign Monitor Extension","slug":"","current":"0.4.67","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Contact Form 7 Campaign Monitor Extension plugin <= 0.4.67 - Arbitrary File Deletion vulnerability","cvss":5.3,"count":1}}],"themes":[{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false},{"name":"Divi","slug":"Divi","current":"4.27.5","latest":"4.27.8","active":false},{"name":"Divi Child","slug":"divi-child","current":"1.0.0","latest":"1.0.0","active":true},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false}]},{"name":"Sydney Dance Company","url":"www.sydneydancecompany.com","status":"up","label":"","core":{"current":"7.1","latest":"7.1"},"plugins":[{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"2.0.1","new":"2.0.2","active":false,"kind":"plugin"},{"name":"Simple History","slug":"simple-history","current":"5.32.0","new":"5.33.0","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.4","new":"28.5","active":true,"kind":"plugin"}],"themes":[{"name":"Divi Child","slug":"Divi Child","current":"1.1","latest":"1.1","active":true},{"name":"Divi","slug":"Divi","current":"4.27.8","latest":"4.27.8","active":false},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false},{"name":"Twentytwentyfour","slug":"twentytwentyfour","current":"1.6","latest":"1.6","active":false},{"name":"Twentytwentythree","slug":"twentytwentythree","current":"1.7","latest":"1.7","active":false}]},{"name":"Sydney Dance Company","url":"staging.sydneydancecompany.com","status":"up","label":"","core":{"current":"7.1","latest":"7.1"},"plugins":[{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"2.0.1","new":"2.0.2","active":false,"kind":"plugin"},{"name":"Perfmatters","slug":"perfmatters","current":"2.6.7","new":"2.6.8","active":true,"kind":"plugin"},{"name":"Simple History","slug":"simple-history","current":"5.32.0","new":"5.33.0","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.4","new":"28.5","active":true,"kind":"plugin"}],"themes":[{"name":"Twentytwentyfour","slug":"twentytwentyfour","current":"1.6","latest":"1.6","active":false},{"name":"Twentytwentythree","slug":"twentytwentythree","current":"1.7","latest":"1.7","active":false},{"name":"Divi Child","slug":"Divi Child","current":"1.1","latest":"1.1","active":true},{"name":"Divi","slug":"Divi","current":"4.27.8","latest":"4.27.8","active":false},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false}]},{"name":"TEM","url":"newtemstg.wpengine.com","status":"disc","label":"","core":{"current":"6.8.3","latest":"7.1"},"plugins":[{"name":"Advanced Custom Fields PRO","slug":"advanced-custom-fields-pro","current":"6.6.0","new":"6.6.1","active":true,"kind":"plugin"},{"name":"Download Manager Pro","slug":"download-manager-pro","current":"6.5.4","new":"6.8.4","active":true,"kind":"plugin"},{"name":"Poll Maker","slug":"poll-maker","current":"6.0.5","new":"6.0.6","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Poll Maker plugin <= 6.0.7 - Authenticated (Administrator+) SQL Injection via `filterbyauthor` Parameter vulnerability","cvss":7.6,"count":2}},{"name":"Smush Pro","slug":"wpmudev_install-912164","current":"3.19.0","new":"3.22.1","active":true,"kind":"plugin"},{"name":"WooCommerce","slug":"woocommerce","current":"10.2.2","new":"10.3.0","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress WooCommerce plugin <= 10.9.4 - SQL Injection vulnerability","cvss":7.6,"count":4}},{"name":"WooCommerce Min/Max Quantities","slug":"woocommerce-com-minmax-quantities","current":"4.0.6","new":"5.1.0","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"26.1.1","new":"26.2","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Yoast SEO plugin <= 26.8 - Authenticated (Contributor+) Stored Cross-Site Scripting via 'yoast-schema' Block Attribute vulnerability","cvss":6.5,"count":4}},{"name":"UpdraftPlus - Backup/Restore","slug":"","current":"1.25.8","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress UpdraftPlus: WP Backup & Migration Plugin <= 1.26.4 - Unauthenticated Authentication Bypass via UpdraftCentral udrpc vulnerability","cvss":8.1,"count":2}},{"name":"Shared Files","slug":"","current":"1.7.54","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Shared Files plugin < 1.7.67 - Unauthenticated Arbitrary File Deletion vulnerability","cvss":8.6,"count":5}},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"","current":"1.22.1","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress GTM4WP – A Google Tag Manager (GTM) plugin for WordPress plugin <= 1.22.3 - Unauthenticated Stored Cross-Site Scripting vulnerability","cvss":7.1,"count":1}},{"name":"Kadence WooCommerce Email Designer","slug":"","current":"1.5.17","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress Kadence WooCommerce Email Designer plugin <= 1.5.19 - Privilege Escalation vulnerability","cvss":9.8,"count":1}},{"name":"HubSpot All-In-One Marketing - Forms, Popups, Live Chat","slug":"","current":"11.3.21","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress HubSpot plugin <= 11.3.55 - Sensitive Data Exposure vulnerability","cvss":7.4,"count":2}},{"name":"Pods - Custom Content Types and Fields","slug":"","current":"3.3.4","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress Pods plugin <= 3.3.9 - Unauthenticated Privilege Escalation vulnerability","cvss":9.8,"count":6}},{"name":"All-in-One WP Migration and Backup","slug":"","current":"7.100","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress All-in-One WP Migration and Backup plugin <= 7.109 - Unauthenticated Second-Order SQL Injection via Archive Restore to Remote Code Execution vulnerability","cvss":8.8,"count":3}},{"name":"Cart All In One For WooCommerce","slug":"","current":"1.1.20","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Cart All In One For WooCommerce plugin <= 1.1.21 - Authenticated (Administrator+) Code Injection via 'sc_assign_page' Setting vulnerability","cvss":7.2,"count":1}},{"name":"Checkout Field Editor for WooCommerce","slug":"","current":"2.1.5","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Checkout Field Editor (Checkout Manager) for WooCommerce plugin <= 2.1.7 - Unauthenticated Stored Cross-Site Scripting via Block Checkout Custom Radio Field vulnerability","cvss":7.1,"count":1}},{"name":"SVG Support","slug":"","current":"2.5.14","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress SVG Support plugin < 2.5.17 - Author+ Stored XSS via .svgz Sanitization Bypass vulnerability","cvss":5.9,"count":2}},{"name":"WPMU DEV Dashboard","slug":"","current":"4.11.29","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress WPMU DEV Dashboard plugin <= 5.0.1 - Authentication Bypass to Administrator via SSO HMAC Canonicalization Confusion vulnerability","cvss":9.8,"count":2}},{"name":"WP Rocket","slug":"","current":"3.20.0.2","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress WP Rocket plugin <= 3.21.0.1 - Unauthenticated Stored Cross-Site Scripting via Picture Source Attributes in rocket_beacon Endpoint vulnerability","cvss":7.1,"count":1}},{"name":"YayCurrency","slug":"","current":"3.2","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress YayCurrency plugin <= 3.3 - Arbitrary Content Deletion vulnerability","cvss":7.5,"count":3}},{"name":"Popup Maker","slug":"","current":"1.21.5","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Popup Maker plugin <= 1.23.0 - Cross Site Scripting (XSS) vulnerability","cvss":7.1,"count":1}},{"name":"Post Duplicator","slug":"","current":"2.48","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Post Duplicator plugin <= 3.0.10 - PHP Object Injection vulnerability","cvss":8.8,"count":5}}],"themes":[{"name":"Twentytwentytwo","slug":"twentytwentytwo","current":"2.0","latest":"2.0","active":false},{"name":"Divi","slug":"Divi","current":"4.27.4","latest":"4.27.4","active":false},{"name":"Divi Child","slug":"Divi-Child","current":"1.1","latest":"1.1","active":true}]},{"name":"TEM","url":"online.tasmanenvironmental.com.au","status":"up","label":"","core":{"current":"7.0.4","latest":"7.1"},"plugins":[{"name":"Advanced Custom Fields PRO","slug":"advanced-custom-fields-pro","current":"6.8.9","new":"6.8.10","active":true,"kind":"plugin"},{"name":"All-in-One WP Migration and Backup","slug":"all-in-one-wp-migration","current":"7.110","new":"7.111","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress All-in-One WP Migration and Backup plugin <= 7.110 - Unauthenticated Insufficient Credential Protection vulnerability","cvss":5.3,"count":1}},{"name":"Checkout Field Editor for WooCommerce","slug":"woo-checkout-field-editor-pro","current":"2.1.9","new":"2.2.0","active":true,"kind":"plugin"},{"name":"Divi FilterGrid","slug":"dp-divi-filtergrid","current":"4.3","new":"4.3.2","active":true,"kind":"plugin"},{"name":"Download Manager Pro","slug":"download-manager-pro","current":"6.5.4","new":"7.5.5","active":true,"kind":"plugin"},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"1.22.5","new":"2.0.2","active":true,"kind":"plugin"},{"name":"HubSpot All-In-One Marketing - Forms, Popups, Live Chat","slug":"leadin","current":"11.3.71","new":"11.3.75","active":true,"kind":"plugin"},{"name":"Kadence Security Basic","slug":"better-wp-security","current":"10.0.3","new":"10.0.4","active":true,"kind":"plugin"},{"name":"Pods - Custom Content Types and Fields","slug":"pods","current":"3.3.9.1","new":"3.3.9.2","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress Pods plugin 3.3-3.3.9.1 - Unauthenticated Privilege Escalation vulnerability","cvss":9.8,"count":3}},{"name":"Poll Maker","slug":"poll-maker","current":"6.4.7","new":"6.4.9","active":true,"kind":"plugin"},{"name":"Post Types Order","slug":"post-types-order","current":"2.5","new":"2.5.3","active":true,"kind":"plugin"},{"name":"Quantity Plus Minus Button for WooCommerce","slug":"wc-quantity-plus-minus-button","current":"2.1.0","new":"2.1.1","active":true,"kind":"plugin"},{"name":"Shared Files","slug":"shared-files","current":"1.7.70","new":"1.7.71","active":true,"kind":"plugin"},{"name":"WP Umbrella","slug":"wp-health","current":"2.27.2","new":"2.27.3","active":true,"kind":"plugin"},{"name":"WooCommerce","slug":"woocommerce","current":"11.0.1","new":"11.1.0","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress WooCommerce plugin < 11.1.0 - Denial of Service Attack vulnerability","cvss":7.5,"count":1}},{"name":"WooCommerce Min/Max Quantities","slug":"woocommerce-com-minmax-quantities","current":"4.0.6","new":"5.2.12","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.3","new":"28.5","active":true,"kind":"plugin"},{"name":"WPMU DEV Dashboard","slug":"","current":"5.0.0","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress WPMU DEV Dashboard plugin <= 5.0.1 - Authentication Bypass to Administrator via SSO HMAC Canonicalization Confusion vulnerability","cvss":9.8,"count":2}}],"themes":[{"name":"Twentytwentytwo","slug":"twentytwentytwo","current":"2.2","latest":"2.2","active":false},{"name":"Divi Child","slug":"Divi-Child","current":"1.1","latest":"1.1","active":true},{"name":"Divi","slug":"Divi","current":"4.27.8","latest":"4.27.8","active":false}]},{"name":"Women Building NSW","url":"womenbuildingnsw.com.au","status":"disc","label":"","core":{"current":"6.9.1","latest":"7.1"},"plugins":[{"name":"Advanced Custom Fields PRO","slug":"advanced-custom-fields-pro","current":"6.7.0.2","new":"6.7.1","active":true,"kind":"plugin"},{"name":"Smush Pro","slug":"wpmudev_install-912164","current":"3.19.0","new":"3.23.4","active":true,"kind":"plugin"},{"name":"WP Rocket","slug":"wp-rocket","current":"3.20.3","new":"3.20.6.1","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress WP Rocket plugin <= 3.21.0.1 - Unauthenticated Stored Cross-Site Scripting via Picture Source Attributes in rocket_beacon Endpoint vulnerability","cvss":7.1,"count":1}},{"name":"WPMU DEV Dashboard","slug":"wpmudev_install-119","current":"4.11.29","new":"4.11.30","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress WPMU DEV Dashboard plugin <= 5.0.1 - Authentication Bypass to Administrator via SSO HMAC Canonicalization Confusion vulnerability","cvss":9.8,"count":2}},{"name":"SVG Support","slug":"","current":"2.5.14","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress SVG Support plugin < 2.5.17 - Author+ Stored XSS via .svgz Sanitization Bypass vulnerability","cvss":5.9,"count":2}},{"name":"All-in-One WP Migration and Backup","slug":"","current":"7.101","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress All-in-One WP Migration and Backup plugin <= 7.109 - Unauthenticated Second-Order SQL Injection via Archive Restore to Remote Code Execution vulnerability","cvss":8.8,"count":3}},{"name":"Enable Media Replace","slug":"","current":"4.1.7","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Enable Media Replace plugin <= 4.1.8 - Authenticated (Author+) Stored Cross-Site Scripting vulnerability","cvss":5.9,"count":3}},{"name":"Pods - Custom Content Types and Fields","slug":"","current":"3.3.4","active":true,"kind":"plugin","vuln":{"severity":"critical","title":"WordPress Pods plugin <= 3.3.9 - Unauthenticated Privilege Escalation vulnerability","cvss":9.8,"count":6}},{"name":"Yoast SEO","slug":"","current":"26.8","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Yoast SEO plugin <= 26.8 - Authenticated (Contributor+) Stored Cross-Site Scripting via 'yoast-schema' Block Attribute vulnerability","cvss":6.5,"count":3}},{"name":"Easy Media Replace","slug":"","current":"0.2.0","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Easy Media Replace plugin <= 0.2.0 - Author+ Stored XSS via Attachment Title vulnerability","cvss":5.9,"count":1}},{"name":"Ivory Search","slug":"","current":"5.5.14","active":true,"kind":"plugin","vuln":{"severity":"medium","title":"WordPress Ivory Search – WordPress Search Plugin plugin <= 5.5.15 - Authenticated (Administrator+) Stored Cross-Site Scripting vulnerability","cvss":5.9,"count":1}},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"","current":"1.22.3","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress GTM4WP – A Google Tag Manager (GTM) plugin for WordPress plugin <= 1.22.3 - Unauthenticated Stored Cross-Site Scripting vulnerability","cvss":7.1,"count":1}},{"name":"Logtivity","slug":"","current":"3.3.6","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Activity Logs, User Activity Tracking, Multisite Activity Log from Logtivity plugin <= 3.3.6 - Sensitive Data Exposure vulnerability","cvss":7.5,"count":2}},{"name":"Advanced Google reCAPTCHA","slug":"","current":"1.31","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Advanced Google reCAPTCHA plugin <= 5.38 - Authenticated (Subscriber+) Authentication Bypass vulnerability","cvss":8.8,"count":2}},{"name":"Divi Carousel Lite","slug":"","current":"1.6.3","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress Divi Carousel Lite - Image Carousel, Logo Carousel, Testimonial Carousel Slider and more plugin <= 1.6.3 - Reflected Cross Site Scripting (XSS) vulnerability","cvss":7.1,"count":1}},{"name":"WPIDE - File Manager & Code Editor","slug":"","current":"3.5.3","active":true,"kind":"plugin","vuln":{"severity":"high","title":"WordPress WPIDE – File Manager & Code Editor plugin <= 3.5.6 - Cross Site Request Forgery (CSRF) vulnerability","cvss":8.8,"count":2}}],"themes":[{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.2","latest":"1.2","active":false},{"name":"Twentytwentyfour","slug":"twentytwentyfour","current":"1.3","latest":"1.3","active":false},{"name":"Divi Child","slug":"Divi Child","current":"1","latest":"1","active":true},{"name":"Divi","slug":"Divi","current":"4.27.4","latest":"4.27.4","active":false}]},{"name":"Yarra Capital Management","url":"www.yarracm.com","status":"up","label":"","core":{"current":"7.0.4","latest":"7.1"},"plugins":[{"name":"Activity Log","slug":"aryo-activity-log","current":"2.14.1","new":"2.15.0","active":true,"kind":"plugin"},{"name":"Advanced Custom Fields PRO","slug":"advanced-custom-fields-pro","current":"6.8.9","new":"6.8.10","active":true,"kind":"plugin"},{"name":"Divi FilterGrid","slug":"dp-divi-filtergrid","current":"4.3.1","new":"4.3.2","active":true,"kind":"plugin"},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"2.0.1","new":"2.0.2","active":true,"kind":"plugin"},{"name":"Kadence Security Basic","slug":"better-wp-security","current":"10.0.3","new":"10.0.4","active":true,"kind":"plugin"},{"name":"Max Mega Menu","slug":"megamenu","current":"3.10.7","new":"3.10.8","active":true,"kind":"plugin"},{"name":"Post Types Order","slug":"post-types-order","current":"2.5.1","new":"2.5.3","active":true,"kind":"plugin"},{"name":"Relevanssi","slug":"relevanssi","current":"4.28.2","new":"4.28.3","active":true,"kind":"plugin"},{"name":"Smush Pro","slug":"wpmudev_install-912164","current":"4.3.2","new":"4.3.3","active":true,"kind":"plugin"},{"name":"WP Data Access","slug":"wp-data-access","current":"5.5.82","new":"5.5.84","active":true,"kind":"plugin"},{"name":"Wordfence Security","slug":"wordfence","current":"9.0.0","new":"9.0.1","active":true,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.4","new":"28.5","active":true,"kind":"plugin"}],"themes":[{"name":"Divi Child","slug":"Divi-Child","current":"1.0","latest":"1.0","active":true},{"name":"Divi","slug":"Divi","current":"4.27.8","latest":"4.27.8","active":false},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false},{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false}]},{"name":"Yarra Capital Management","url":"yarracapstg.wpenginepowered.com","status":"up","label":"","core":{"current":"7.1","latest":"7.1"},"plugins":[{"name":"Activity Log","slug":"aryo-activity-log","current":"2.14.1","new":"2.15.0","active":true,"kind":"plugin"},{"name":"Advanced Custom Fields PRO","slug":"advanced-custom-fields-pro","current":"6.8.9","new":"6.8.10","active":true,"kind":"plugin"},{"name":"Divi FilterGrid","slug":"dp-divi-filtergrid","current":"4.3.1","new":"4.3.2","active":true,"kind":"plugin"},{"name":"GTM4WP - A Google Tag Manager (GTM) plugin for WordPress","slug":"duracelltomi-google-tag-manager","current":"2.0.1","new":"2.0.2","active":true,"kind":"plugin"},{"name":"Kadence Security Basic","slug":"better-wp-security","current":"10.0.3","new":"10.0.4","active":true,"kind":"plugin"},{"name":"Max Mega Menu","slug":"megamenu","current":"3.10.7","new":"3.10.8","active":true,"kind":"plugin"},{"name":"Post Types Order","slug":"post-types-order","current":"2.5.1","new":"2.5.3","active":true,"kind":"plugin"},{"name":"Relevanssi","slug":"relevanssi","current":"4.28.2","new":"4.28.3","active":true,"kind":"plugin"},{"name":"Smush Pro","slug":"wpmudev_install-912164","current":"4.3.2","new":"4.3.3","active":true,"kind":"plugin"},{"name":"WP Data Access","slug":"wp-data-access","current":"5.5.82","new":"5.5.84","active":true,"kind":"plugin"},{"name":"WPIDE - File Manager & Code Editor","slug":"wpide","current":"3.5.8","new":"3.5.9","active":false,"kind":"plugin"},{"name":"Yoast SEO","slug":"wordpress-seo","current":"28.4","new":"28.5","active":true,"kind":"plugin"}],"themes":[{"name":"Divi Child","slug":"Divi-Child","current":"1.0","latest":"1.0","active":true},{"name":"Divi","slug":"Divi","current":"4.27.8","latest":"4.27.8","active":false},{"name":"Genesis Block Theme","slug":"genesis-block-theme","current":"1.0.0","latest":"1.0.0","active":false},{"name":"Twentytwentyfive","slug":"twentytwentyfive","current":"1.5","latest":"1.5","active":false}]}]});
+
+/* ---- premium / license-required heuristic ---- */
+const PREMIUM = new Set(["elementor-pro","advanced-custom-fields-pro","acf-extended-pro","wp-rocket","gravityforms","gravityformscli","woocommerce-subscriptions","woocommerce-bookings","woocommerce-memberships","revslider","layerslider","js_composer","wpbakery","wpforms","ninja-forms-pro","formidable-pro","events-calendar-pro","sitepress-multilingual-cms","wpml-string-translation","sfwd-lms","learndash","wordpress-seo-premium","all-in-one-seo-pack-pro","seo-by-rank-math-pro","updraftplus-premium","backupbuddy","Divi","divi-builder","wpmudev","smush-pro","hummingbird-pro","forminator-pro","memberpress","paid-memberships-pro-pro","gp-premium","generatepress-premium","astra-addon","kadence-pro","wprocket","perfmatters","imagify-pro","searchwp","facetwp","toolset-types","acfml","wp-all-import-pro","wpai","wp-grid-builder","fluentformpro","woocommerce-product-addons","woocommerce-gateway-stripe-pro","elementor-pro-elements","essential-addons-elementor-pro"]);
+
+/* ---- environment: live (production) vs staging ---- */
+const STAGING_HOSTS=/(^|\.)(wpengine\.com|wpenginepowered\.com|wpcomstaging\.com|pantheonsite\.io|kinsta\.cloud|kinsta\.dev|flywheelsites\.com|myftpupload\.com|dream\.press|onrocket\.site|instawp\.xyz|cloudwaysapps\.com|wpstage\.net)$/i;
+const STAGING_TOKEN=/(^|[.\-_/])(staging|stg|stage|dev|development|test|testing|uat|sandbox|preview|temp|tmp|local)([.\-_/]|$)/i;
+function isStaging(s){
+  const host=(s.url||'').toLowerCase().split('/')[0];
+  if(STAGING_TOKEN.test(host)) return true;
+  if(STAGING_TOKEN.test((s.name||'').toLowerCase())) return true;
+  if(STAGING_HOSTS.test(host)) return true;
+  return false;
+}
+DATA.sites.forEach(s=>{ s._staging=isStaging(s); });
+let activeEnv='production';
+function envList(){ return DATA.sites.filter(s=> activeEnv==='all' ? true : (s._staging?'staging':'production')===activeEnv ); }
+
+/* ============================================================ */
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const isPrem = p => p.premium || PREMIUM.has(p.slug);
+const needsUpd = p => p.new && p.new !== p.current;
+
+function analyze(site){
+  const upd = site.plugins.filter(p=>p.kind!=='theme'&&p.kind!=='core'&&needsUpd(p));
+  const vulns = site.plugins.filter(p=>p.vuln);
+  const lic = upd.filter(isPrem);
+  const themeUpd = (site.themes||[]).filter(t=>t.latest && t.latest !== t.current);
+  const coreOut = site.core.current !== site.core.latest;
+  return {upd, vulns, lic, themeUpd, coreOut,
+    score: vulns.length*100 + (coreOut?40:0) + upd.length*3 + themeUpd.length*2};
+}
+
+const vertHTML = (o,n)=>`<span class="vert"><span class="old">${esc(o)}</span><span class="arw">→</span><span class="new">${esc(n)}</span></span>`;
+
+const ICON = {
+  plug:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 2v6m6-6v6M6 8h12v3a6 6 0 0 1-12 0V8Zm6 9v5"/></svg>',
+  shield:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 4 6v6c0 5 3.5 7.5 8 9 4.5-1.5 8-4 8-9V6l-8-3Z"/></svg>',
+  key:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7.5" cy="15.5" r="3.5"/><path d="m10 13 8-8m-2 0 2 2m-4 2 2 2"/></svg>',
+  brush:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.5 14.5 3 21m6.5-6.5a3.5 3.5 0 0 1-5 5c1.5 0 2-1 2.5-2s2-1.5 2.5-3ZM14 11l7-7-2-2-7 7"/></svg>',
+  wp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9.2"/><path d="M3 9h6l3 9 2.4-6.6M9.5 9l3.5 9M15 9h3.5"/></svg>'
+};
+
+let activeFilter = "all";
+
+function matchesFilter(a){
+  switch(activeFilter){
+    case "updates": return a.upd.length>0;
+    case "critical": return a.vulns.length>0;
+    case "license": return a.lic.length>0;
+    case "core": return a.coreOut;
+    case "themes": return a.themeUpd.length>0;
+    default: return true;
+  }
+}
+
+function siteCard(site, a){
+  const st = site.status==="up"?"up":site.status==="down"?"down":"disc";
+  const stTitle = site.status==="up"?"Online":site.status==="down"?"Down":"Disconnected";
+  const chips=[];
+  if(a.vulns.length) chips.push(`<span class="mini vul" title="Vulnerabilities">${a.vulns.length}<span class="lbl"> vuln</span></span>`);
+  if(a.coreOut) chips.push(`<span class="mini core" title="WordPress core outdated">core</span>`);
+  if(a.upd.length) chips.push(`<span class="mini upd" title="Plugin updates">${a.upd.length}<span class="lbl"> upd</span></span>`);
+  if(a.themeUpd.length) chips.push(`<span class="mini upd" title="Theme updates">${a.themeUpd.length}<span class="lbl"> theme</span></span>`);
+  if(!chips.length) chips.push(`<span class="mini clean" title="Fully up to date">✓<span class="lbl"> current</span></span>`);
+
+  // sections
+  let secs="";
+  // plugin updates
+  if(a.upd.length){
+    secs += `<div class="sec"><div class="sec-h">${ICON.plug}<span class="t">Plugin updates</span><span class="n">${a.upd.length}</span></div><div class="rows">` +
+      a.upd.map(p=>`<div class="row"><span class="p-name">${esc(p.name)}${p.active?'':'<span class="inact">inactive</span>'}</span>`+
+        (p.vuln?`<span class="badge vln">Vuln</span>`:'')+(isPrem(p)?`<span class="badge lic">License</span>`:'')+
+        vertHTML(p.current,p.new)+`</div>`).join('') + `</div></div>`;
+  }
+  // critical
+  if(a.vulns.length){
+    secs += `<div class="sec"><div class="sec-h">${ICON.shield}<span class="t" style="color:var(--crit)">Critical — security</span><span class="n">${a.vulns.length}</span></div><div class="rows">`+
+      a.vulns.map(p=>`<div class="row"><span class="p-name">${esc(p.name)}</span><span class="sev ${p.vuln.severity}">${p.vuln.severity}</span>`+
+        (needsUpd(p)?vertHTML(p.current,p.new):`<span class="vert"><span class="new">${esc(p.current)}</span></span>`)+
+        `<div class="vuln-desc" style="flex-basis:100%;font-size:12.5px;color:var(--muted)">${esc(p.vuln.title)}</div></div>`).join('')+`</div></div>`;
+  }
+  // license required
+  if(a.lic.length){
+    secs += `<div class="sec"><div class="sec-h">${ICON.key}<span class="t">Needs a license to update</span><span class="n">${a.lic.length}</span></div><div class="rows">`+
+      a.lic.map(p=>`<div class="row"><span class="p-name">${esc(p.name)}<span class="badge lic">Premium</span></span>`+vertHTML(p.current,p.new)+`</div>`).join('')+`</div></div>`;
+  }
+  // core
+  {
+    const ok = !a.coreOut;
+    secs += `<div class="sec"><div class="sec-h">${ICON.wp.replace('viewBox','class="ic" viewBox')}<span class="t">WordPress core</span></div>`+
+      `<div class="core-line ${ok?'ok':''}"><span class="wp">${ICON.wp}</span><div class="core-txt"><div class="k">Core version</div>`+
+      (ok?`<span class="vert"><span class="new">${esc(site.core.current)}</span></span> <span style="color:var(--ok);font-size:12px;font-weight:600">Up to date</span>`
+         :vertHTML(site.core.current, site.core.latest))+`</div>`+
+      (ok?'':`<span class="badge core">Update</span>`)+`</div></div>`;
+  }
+  // themes
+  {
+    const rows = (site.themes||[]).map(t=>{
+      const upd = t.latest && t.latest!==t.current;
+      return `<div class="row"><span class="p-name">${esc(t.name)}${t.active?'':'<span class="inact">inactive</span>'}</span>`+
+        (upd?vertHTML(t.current,t.latest):`<span class="vert"><span class="new">${esc(t.current)}</span></span><span style="color:var(--ok);font-size:11.5px;font-weight:600">current</span>`)+`</div>`;
+    }).join('');
+    secs += `<div class="sec"><div class="sec-h">${ICON.brush}<span class="t">Themes</span><span class="n">${a.themeUpd.length?a.themeUpd.length+' update'+(a.themeUpd.length>1?'s':''):'current'}</span></div><div class="rows">${rows}</div></div>`;
+  }
+
+  const el = document.createElement('article');
+  el.className='site';
+  el.innerHTML = `<button class="site-head" aria-expanded="false">
+      <span class="stat ${st}" title="${stTitle}"></span>
+      <span class="site-id">
+        <span class="nm">${esc(site.name)}${site._staging?' <span class="tag stg">Staging</span>':''}${site.label?` <span class="tag">${esc(site.label)}</span>`:''}</span>
+        <span class="url">${esc(site.url)}</span>
+      </span>
+      <span class="head-chips">${chips.join('')}</span>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
+    <div class="body">${secs}</div>`;
+  const btn = el.querySelector('.site-head');
+  btn.addEventListener('click', ()=>{
+    const open = el.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open?'true':'false');
+  });
+  return el;
+}
+
+function render(){
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  const sortBy = document.getElementById('sort').value;
+  const grid = document.getElementById('grid');
+  grid.innerHTML='';
+  let list = envList().map(s=>({s, a:analyze(s)}));
+
+  list.sort((x,y)=>{
+    if(sortBy==='name') return x.s.name.localeCompare(y.s.name);
+    if(sortBy==='vulns') return y.a.vulns.length-x.a.vulns.length || y.a.score-x.a.score;
+    return y.a.score-x.a.score;
+  });
+
+  let shown=0;
+  list.forEach(({s,a})=>{
+    if(!matchesFilter(a)) return;
+    if(q){
+      const hay = (s.name+' '+s.url+' '+s.plugins.map(p=>p.name).join(' ')+' '+(s.themes||[]).map(t=>t.name).join(' ')).toLowerCase();
+      if(!hay.includes(q)) return;
+    }
+    grid.appendChild(siteCard(s,a));
+    shown++;
+  });
+  document.getElementById('noresults').hidden = shown>0;
+  grid.hidden = shown===0;
+}
+
+function renderGroups(bodyEl, pairs, opts){
+  const groups={};
+  pairs.forEach(({site,p})=>{const g=groups[p.name]||(groups[p.name]={name:p.name,premium:isPrem(p),sites:[]});g.sites.push({site,current:p.current,new:p.new,vuln:!!p.vuln});});
+  const glist=Object.values(groups).sort((x,y)=> y.sites.length-x.sites.length || x.name.localeCompare(y.name));
+  const total=pairs.length;
+  if(!glist.length){ bodyEl.innerHTML=`<div class="panel-empty">${opts.empty}</div>`; return; }
+  const GCAP=12;
+  const grpHTML=g=>{
+    const curs=[...new Set(g.sites.map(s=>s.current))], news=[...new Set(g.sites.map(s=>s.new))];
+    const ver=(curs.length===1&&news.length===1)?vertHTML(curs[0],news[0])
+      :`<span class="vert"><span class="arw">→</span> <span class="new">${news.length===1?esc(news[0]):'latest'}</span></span>`;
+    const sub=g.sites.map(s=>`<div class="grp-site"><span class="gs-name">${esc(s.site)}</span>${s.vuln?'<span class="badge vln">Vuln</span>':''}${vertHTML(s.current,s.new)}</div>`).join('');
+    return `<div class="grp"><button class="grp-head" type="button" aria-expanded="false">`+
+      `<span class="grp-count" title="${g.sites.length} site${g.sites.length>1?'s':''}">${g.sites.length}</span>`+
+      `<span class="grp-name">${esc(g.name)}${g.premium?'<span class="badge lic">License</span>':''}</span>`+
+      `<span class="grp-ver">${ver}</span>`+
+      `<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button>`+
+      `<div class="grp-body">${sub}</div></div>`;
+  };
+  const note=opts.note?`<div class="panel-note">${opts.note(total,glist.length)}</div>`:'';
+  const head=glist.slice(0,GCAP).map(grpHTML).join('');
+  const rest=glist.slice(GCAP);
+  let more='';
+  if(rest.length) more=`<div class="grp-extra" hidden>${rest.map(grpHTML).join('')}</div>`+
+    `<button class="grp-more" type="button">Show all ${glist.length} plugins</button>`;
+  bodyEl.innerHTML=note+head+more;
+  const mb=bodyEl.querySelector('.grp-more');
+  if(mb) mb.addEventListener('click',()=>{const ex=bodyEl.querySelector('.grp-extra');const open=ex.hidden;ex.hidden=!open;mb.textContent=open?'Show fewer':`Show all ${glist.length} plugins`;});
+  bodyEl.querySelectorAll('.grp-head').forEach(h=>h.addEventListener('click',()=>{const o=h.parentElement.classList.toggle('open');h.setAttribute('aria-expanded',o?'true':'false');}));
+}
+
+function buildSummary(){
+  const all = envList().map(s=>({s,a:analyze(s)}));
+  const sum = {
+    sites: all.length,
+    upd: all.reduce((n,x)=>n+x.a.upd.length,0),
+    vuln: all.reduce((n,x)=>n+x.a.vulns.length,0),
+    lic: all.reduce((n,x)=>n+x.a.lic.length,0),
+    core: all.filter(x=>x.a.coreOut).length,
+    themes: all.reduce((n,x)=>n+x.a.themeUpd.length,0),
+    clean: all.filter(x=>!x.a.upd.length && !x.a.vulns.length && !x.a.coreOut && !x.a.themeUpd.length).length,
+  };
+  document.getElementById('kpis').innerHTML = [
+    ['ok','sites', sum.sites,'Sites monitored'],
+    [sum.vuln?'crit':'ok','vuln', sum.vuln,'Vulnerabilities'],
+    [sum.upd?'warn':'ok','upd', sum.upd,'Plugin updates'],
+    [sum.core?'info':'ok','core', sum.core,'Core outdated'],
+    [sum.lic?'':'ok','lic', sum.lic,'Need a license'],
+    [sum.themes?'warn':'ok','th', sum.themes,'Theme updates'],
+  ].map(([cls,,num,lbl])=>`<div class="kpi ${cls}"><span class="rail"></span><div class="num">${num}</div><div class="lbl">${lbl}</div></div>`).join('');
+
+  // filter counts
+  document.getElementById('f-all').textContent = all.length;
+  document.getElementById('f-updates').textContent = all.filter(x=>x.a.upd.length).length;
+  document.getElementById('f-critical').textContent = all.filter(x=>x.a.vulns.length).length;
+  document.getElementById('f-license').textContent = all.filter(x=>x.a.lic.length).length;
+  document.getElementById('f-core').textContent = all.filter(x=>x.a.coreOut).length;
+  document.getElementById('f-themes').textContent = all.filter(x=>x.a.themeUpd.length).length;
+
+  // ===== action panel: tab 1 — attention (vulnerabilities) =====
+  const rank={critical:0,high:1,medium:2};
+  const vs=[];
+  all.forEach(({s,a})=>a.vulns.forEach(p=>vs.push({site:s, p})));
+  vs.sort((x,y)=> (rank[x.p.vuln.severity]-rank[y.p.vuln.severity]) || ((+y.p.vuln.cvss||0)-(+x.p.vuln.cvss||0)));
+  const nCrit=vs.filter(v=>v.p.vuln.severity==='critical').length;
+  const nHigh=vs.filter(v=>v.p.vuln.severity==='high').length;
+  const nMed=vs.length-nCrit-nHigh;
+  const sitesVuln=all.filter(x=>x.a.vulns.length).length;
+  let spotlight=vs.filter(v=>v.p.vuln.severity!=='medium');
+  if(!spotlight.length) spotlight=vs;
+  const CAP=10;
+  const vulnRow=({site,p})=>
+    `<div class="vuln-row"><span class="sev ${p.vuln.severity}">${p.vuln.severity}</span>`+
+    `<span class="vuln-plugin">${esc(p.name)}</span>`+
+    `<span class="vuln-desc">${esc(p.vuln.title)}</span>`+
+    `<span class="vuln-site">${esc(site.name)}</span></div>`;
+  const attBody=document.getElementById('band-rows');
+  document.getElementById('att-cnt').textContent = vs.length;
+  if(vs.length){
+    const note=`<div class="panel-note">${nCrit} critical · ${nHigh} high${nMed?' · '+nMed+' medium':''} across ${sitesVuln} site${sitesVuln!==1?'s':''}</div>`;
+    const head=spotlight.slice(0,CAP).map(vulnRow).join('');
+    const rest=spotlight.slice(CAP);
+    let more='';
+    if(rest.length) more=`<div class="band-extra" hidden>${rest.map(vulnRow).join('')}</div>`+
+      `<button class="band-more" type="button">Show all ${spotlight.length}${spotlight===vs?'':' critical &amp; high'} issues</button>`;
+    attBody.innerHTML=note+head+more;
+    const btn=attBody.querySelector('.band-more');
+    if(btn) btn.addEventListener('click',()=>{const ex=attBody.querySelector('.band-extra');const open=ex.hidden;ex.hidden=!open;btn.textContent=open?'Show fewer':`Show all ${spotlight.length}${spotlight===vs?'':' critical & high'} issues`;});
+  } else attBody.innerHTML=`<div class="panel-empty">No known vulnerabilities across these sites. 🎉</div>`;
+
+  // ===== action panel: tab 2 — plugin updates (grouped by plugin) =====
+  const updPairs=[]; all.forEach(({s,a})=>a.upd.forEach(p=>updPairs.push({site:s.name, p})));
+  document.getElementById('upd-cnt').textContent = updPairs.length;
+  renderGroups(document.getElementById('upd-rows'), updPairs, {
+    empty:"Every plugin is up to date across these sites. 🎉",
+    note:(t,n)=>`${t} update${t!==1?'s':''} across ${n} plugin${n!==1?'s':''} — grouped so one action covers every affected site`});
+
+  // ===== action panel: tab 3 — license required (premium plugins) =====
+  const licPairs=[]; all.forEach(({s,a})=>a.lic.forEach(p=>licPairs.push({site:s.name, p})));
+  document.getElementById('lic-cnt').textContent = licPairs.length;
+  renderGroups(document.getElementById('lic-rows'), licPairs, {
+    empty:"No premium plugins need a license-based update in this view.",
+    note:(t,n)=>`${t} update${t!==1?'s':''} across ${n} premium plugin${n!==1?'s':''} — each needs a valid license key to update`});
+
+  document.getElementById('panel').hidden = !(vs.length || updPairs.length);
+
+  // as-of
+  const d=new Date(DATA.generatedAt);
+  const opts={weekday:'short',day:'numeric',month:'short',hour:'numeric',minute:'2-digit'};
+  document.getElementById('asof').textContent = 'Updated '+d.toLocaleString('en-AU',opts)+' · '+ageStr(DATA.generatedAt);
+  document.getElementById('demo-flag').hidden = !DATA.isDemo;
+}
+
+/* filter chips */
+document.getElementById('filters').addEventListener('click', e=>{
+  const chip = e.target.closest('.chip'); if(!chip) return;
+  activeFilter = chip.dataset.f;
+  document.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed', c===chip?'true':'false'));
+  render();
+});
+document.getElementById('q').addEventListener('input', render);
+document.getElementById('sort').addEventListener('change', render);
+
+/* environment tabs */
+(function(){
+  const st=DATA.sites.filter(s=>s._staging).length;
+  document.getElementById('e-prod').textContent=DATA.sites.length-st;
+  document.getElementById('e-stag').textContent=st;
+  document.getElementById('e-all').textContent=DATA.sites.length;
+})();
+/* panel tabs: attention <-> plugin updates */
+document.querySelectorAll('.ptab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.ptab').forEach(x=>x.setAttribute('aria-selected', x===t?'true':'false'));
+  const p=t.dataset.p;
+  document.getElementById('p-attention').hidden = p!=='attention';
+  document.getElementById('p-updates').hidden = p!=='updates';
+  document.getElementById('p-license').hidden = p!=='license';
+}));
+
+document.getElementById('envtabs').addEventListener('click', e=>{
+  const t=e.target.closest('.envtab'); if(!t) return;
+  activeEnv=t.dataset.env;
+  document.querySelectorAll('.envtab').forEach(x=>x.setAttribute('aria-selected', x===t?'true':'false'));
+  activeFilter='all';
+  document.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed', c.dataset.f==='all'?'true':'false'));
+  buildSummary(); render();
+});
+
+/* expand all */
+let allOpen=false;
+document.getElementById('expand').addEventListener('click', ()=>{
+  allOpen=!allOpen;
+  document.querySelectorAll('.site').forEach(el=>{
+    el.classList.toggle('open', allOpen);
+    el.querySelector('.site-head').setAttribute('aria-expanded', allOpen?'true':'false');
+  });
+});
+
+/* theme toggle: system -> light -> dark -> system */
+const root=document.documentElement;
+let pref='system';
+try{ pref=localStorage.getItem('nibble-theme')||'system'; }catch(e){}
+function applyTheme(){ if(pref==='system') root.removeAttribute('data-theme'); else root.setAttribute('data-theme',pref); }
+applyTheme();
+document.getElementById('theme').addEventListener('click', ()=>{
+  pref = pref==='system'?'light':pref==='light'?'dark':'system';
+  applyTheme();
+  try{ localStorage.setItem('nibble-theme',pref); }catch(e){}
+});
+
+/* relative age + refresh modal */
+function ageStr(iso){
+  const then=new Date(iso), now=new Date();
+  let s=Math.max(0,(now-then)/1000);
+  const dd=Math.floor(s/86400); if(dd>=1) return dd+' day'+(dd>1?'s':'')+' ago';
+  const hh=Math.floor(s/3600); if(hh>=1) return hh+' hour'+(hh>1?'s':'')+' ago';
+  const mm=Math.floor(s/60); if(mm>=1) return mm+' minute'+(mm>1?'s':'')+' ago';
+  return 'just now';
+}
+buildSummary();
+render();
+</script>
+
+<script>
+const API='https://public-api.wp-umbrella.com';
+const tmodal=document.getElementById('token-modal');
+function openToken(msg){document.getElementById('tok-input').value=getToken();document.getElementById('tok-status').textContent=msg||'';tmodal.hidden=false;setTimeout(()=>document.getElementById('tok-input').focus(),30);}
+function closeToken(){tmodal.hidden=true;}
+document.getElementById('tm-close').addEventListener('click',closeToken);
+tmodal.addEventListener('click',e=>{if(e.target===tmodal)closeToken();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!tmodal.hidden)closeToken();});
+document.getElementById('tok-clear').addEventListener('click',e=>{e.preventDefault();clearToken();document.getElementById('tok-input').value='';document.getElementById('tok-status').textContent='Token removed from this browser.';});
+document.getElementById('tok-save').addEventListener('click',()=>{const t=document.getElementById('tok-input').value.trim();if(!t){document.getElementById('tok-status').textContent='Enter a token first.';return;}setToken(t);closeToken();doRefresh();});
+document.getElementById('settings').addEventListener('click',()=>openToken(''));
+const _arr=x=>Array.isArray(x)?x:[];
+function _cmp(a,b){const A=String(a).split('.').map(Number),B=String(b).split('.').map(Number);for(let i=0;i<Math.max(A.length,B.length);i++){const x=A[i]||0,y=B[i]||0;if(x!==y)return x-y;}return 0;}
+function _sev(s){s=+s||0;return s>=9?'critical':s>=7?'high':'medium';}
+function _pretty(s){return String(s||'').replace(/[-_]/g,' ').replace(/\b\w/g,c=>c.toUpperCase());}
+const _worst=vs=>vs.reduce((m,v)=>(+v.cvss_score>+((m&&m.cvss_score)||0)?v:m),vs[0]);
+let _refreshing=false;
+async function doRefresh(){
+  const tok=getToken();
+  if(!tok){openToken('Connect your WP Umbrella token to pull live data.');return;}
+  if(_refreshing)return; _refreshing=true;
+  const btn=document.getElementById('refresh'); btn.classList.add('spin');
+  const asof=document.getElementById('asof'); const prev=asof.textContent; asof.textContent='Refreshing all sites...';
+  const H={headers:{Authorization:'Bearer '+tok}};
+  const jf=async p=>{try{const r=await fetch(API+p,H);if(!r.ok)return {__err:r.status};return await r.json();}catch(e){return {__neterr:String(e)};}};
+  function fail(msg){asof.textContent=prev;btn.classList.remove('spin');_refreshing=false;openToken(msg);}
+  try{
+    const pj=await jf('/projects?per_page=100');
+    if(pj.__err===401){return fail('Token was rejected. Re-enter your API token.');}
+    if(pj.__err===403){return fail('Token is missing API scope. Regenerate it with API access enabled.');}
+    if(pj.__neterr||!pj.data){return fail('Could not reach WP Umbrella. Check your connection and try again.');}
+    const projects=pj.data;
+    let coreLatest='0'; projects.forEach(p=>{const v=p.warnings&&p.warnings.wordpress_version;if(v&&_cmp(v,coreLatest)>0)coreLatest=v;});
+    const needP=projects.filter(p=>_arr(p.plugins).some(x=>x.need_update));
+    const needV=projects.filter(p=>p.vulnerabilities&&(_arr(p.vulnerabilities.plugins).length||_arr(p.vulnerabilities.themes).length||_arr(p.vulnerabilities.wordpress).length));
+    async function pool(items,fn,n){let i=0;await Promise.all(Array.from({length:n},async()=>{while(i<items.length){await fn(items[i++]);}}));}
+    const plMap={},vuMap={};
+    await pool(needP,async p=>{const d=await jf('/projects/'+p.id+'/plugins?per_page=300');plMap[p.id]=_arr(d&&d.data);},6);
+    await pool(needV,async p=>{const d=await jf('/projects/'+p.id+'/vulnerabilities');vuMap[p.id]=(d&&d.data)||{};},6);
+    const sites=projects.map(p=>{
+      const status=p.is_currently_down?'down':p.is_disconnected?'disc':'up';
+      const label=(_arr(p.labels)[0])||(p.maintenanceCustomer&&p.maintenanceCustomer.company_name)||'';
+      const coreCur=(p.warnings&&p.warnings.wordpress_version)||'—';
+      const core={current:coreCur,latest:(coreCur!=='—'&&_cmp(coreCur,coreLatest)<0)?coreLatest:coreCur};
+      const detail=plMap[p.id]||[];const byName={};const plugins=[];
+      detail.forEach(pl=>{if(pl.need_update&&pl.need_update.new_version){const o={name:pl.name,slug:pl.need_update.slug||pl.key,current:pl.version,new:pl.need_update.new_version,active:pl.is_active,kind:'plugin'};plugins.push(o);byName[pl.name]=o;}});
+      const vd=vuMap[p.id]||{};
+      _arr(vd.plugins).forEach(e=>{const pi=e.plugin||{};const vs=_arr(e.vulnerabilities);if(!vs.length)return;const w=_worst(vs);const v={severity:_sev(w.cvss_score),title:w.title||w.description||'Known vulnerability',cvss:w.cvss_score,count:vs.length};if(byName[pi.name])byName[pi.name].vuln=v;else plugins.push({name:pi.name,slug:pi.slug||'',current:pi.version,new:(pi.latest_version&&pi.latest_version!==pi.version)?pi.latest_version:undefined,active:true,kind:'plugin',vuln:v});});
+      _arr(vd.themes).forEach(e=>{const ti=e.theme||e.plugin||{};const vs=_arr(e.vulnerabilities);if(!vs.length)return;const w=_worst(vs);plugins.push({name:_pretty(ti.name||ti.stylesheet||'Theme'),slug:'',current:ti.version,new:ti.latest_version,active:true,kind:'theme',vuln:{severity:_sev(w.cvss_score),title:w.title||w.description||'Theme vulnerability',cvss:w.cvss_score,count:vs.length}});});
+      _arr(vd.wordpress).forEach(e=>{const vs=_arr(e.vulnerabilities);if(!vs.length)return;const w=_worst(vs);plugins.push({name:'WordPress core',slug:'',current:coreCur,new:core.latest!==coreCur?core.latest:undefined,active:true,kind:'core',vuln:{severity:_sev(w.cvss_score),title:w.title||w.description||'Core vulnerability',cvss:w.cvss_score,count:vs.length}});});
+      const themes=_arr(p.themes).map(t=>({name:_pretty(t.stylesheet||t.template),slug:t.stylesheet,current:t.version,latest:t.latest_version,active:t.is_active}));
+      return {name:p.name,url:p.source_domain||(p.base_url||'').replace(/^https?:\/\//,'').replace(/\/$/,''),status,label,core,plugins,themes};
+    });
+    DATA={generatedAt:new Date().toISOString(),isDemo:false,account:'Nibble Edge',coreLatest,sites};
+    DATA.sites.forEach(s=>{s._staging=isStaging(s);});
+    saveCache(DATA);
+    const st=DATA.sites.filter(s=>s._staging).length;
+    document.getElementById('e-prod').textContent=DATA.sites.length-st;
+    document.getElementById('e-stag').textContent=st;
+    document.getElementById('e-all').textContent=DATA.sites.length;
+    buildSummary(); render();
+  }catch(err){ fail('Refresh failed: '+err); return; }
+  btn.classList.remove('spin'); _refreshing=false;
+}
+document.getElementById('refresh').addEventListener('click',doRefresh);
+if(!getToken() && (!DATA||!DATA.sites||!DATA.sites.length)) openToken('Connect your WP Umbrella token to load your sites.');
+</script>
+
+</body>
+</html>
